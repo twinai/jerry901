@@ -181,7 +181,7 @@
 
   a {
     display: block;
-    margin: 0 1rem;
+    margin: 0 0.7rem;
     color: $masthead-link-color;
     text-decoration: none;
 
@@ -207,6 +207,7 @@
     outline: none;
     background-color: transparent;
     cursor: pointer;
+    padding-left: 0px;
   }
 
   .visible-links {

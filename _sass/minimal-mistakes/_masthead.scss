@@ -84,6 +84,7 @@
   }
 
   #lang-sel {
+    float: right;
     margin-left: 0;
 
     @include breakpoint($small) {

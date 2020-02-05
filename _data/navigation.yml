@@ -6,7 +6,7 @@ main:
      url: /about/
    - title: "Blog"
      url: /categories/
-   - title: "Sample Collections"
-     url: /collection-archive/
-   - title: "Sitemap"
-     url: /sitemap/
+   # - title: "Sample Collections"
+   #  url: /collection-archive/
+   #- title: "Sitemap"
+   #  url: /sitemap/

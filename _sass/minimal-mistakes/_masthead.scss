@@ -84,9 +84,7 @@
   }
 
   #lang-sel {
-	float: right;
     margin-left: 0;
-	margin-right: 0.5em;
 
     @include breakpoint($small) {
       float: right;
@@ -96,15 +94,15 @@
 		font-weight: bold;
 	}
 
-  .lang {
-	vertical-align: middle;
-		font-size: 13px;
+    .lang {
+	   margin-right: 7px;
+     float:right;
+     font-size: 13px;
 
 		a {
 			position: relative;
 			color: #40514e;
 		}
-
 	}
   }
 }

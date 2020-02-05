@@ -10,3 +10,9 @@
 ```bash
  $ git submodule update --init --recursive
 ```
+
+#publish
+ The sources to your master branch
+```bash
+ $ bundle exec rake publish
+```

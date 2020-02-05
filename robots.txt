@@ -1,0 +1,4 @@
+User-agent: *
+Allow:/
+Sitemap: https://chanspark.github.io/sitemap.xml
+Sitemap: https://chanspark.github.io/en/sitemap.xml

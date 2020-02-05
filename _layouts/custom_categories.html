@@ -13,7 +13,7 @@ layout: archive
 
 
 {% comment %}
-<ul style="font-size: 25px">
+<ul style="font-size: 30px">
   {% for i in (1..categories_max) reversed %}
     {% for category in site.categories %}
       {% if category[1].size == i %}
@@ -28,14 +28,15 @@ layout: archive
 </ul>
 {% endcomment %}
 
-<ul class="taxonomy__index">
+<ul class="taxonomy__index" style="font-size: 20px">
   {% for i in (1..categories_max) reversed %}
     {% for category in site.categories %}
       {% if category[1].size == i %}
         <li>
           <a href="{{ category[0] | slugify }}">
-            <strong>{{ category[0] }}</strong> <span class="taxonomy__count">{{ i }}</span>
-          </a>
+            <strong>{{ category[0] }}</strong>
+		  </a>
+		  <div class="taxonomy__count" style="font-size: 15px; float:right;">{{ i }} posts</div>
         </li>
       {% endif %}
     {% endfor %}

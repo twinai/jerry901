@@ -2,7 +2,7 @@ global:
   english: Eng
   korean: Kor
 pages:
-  home: Home
+  home: Home 
   work: Work
 titles:
   pagination: Pagination

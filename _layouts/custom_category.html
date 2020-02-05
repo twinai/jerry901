@@ -1,16 +1,18 @@
 ---
 layout: single 
+classes: wide
 ---
 
 <ul class="posts-list">
   {% assign category = page.category | default: page.title %}
   {% for post in site.categories[category] %}
     <li>
-      <h3>
+      <h3 style="display: inline;">
         <a href="{{ site.baseurl }}{{ post.url }}">
           {{ post.title }}
         </a>
-        <small>{{ post.date | date_to_string }}</small>
+		<br>
+        <small style="color: #8e8b82; font-size: 14px; vertical-align: top">{{ post.date | date_to_string }}</small>
       </h3>
     </li>
   {% endfor %}
@@ -18,7 +20,6 @@ layout: single
 
 
 {% comment %}
-
 {% for i in (1..categories_max) reversed %}
   {% for category in site.categories %}
     {% if category[1].size == i %}

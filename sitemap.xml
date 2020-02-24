@@ -1,0 +1,62 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+{% comment %}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{% for lang in site.languages %}
+    {% for node in site.pages %}
+
+        {% unless site.exclude_from_localization contains node.path %}
+            {% if node.layout %}
+                <url>
+                    <loc>{% if lang == site.default_lang %}{{ node.url | absolute_url }}{% else %}{{ node.url | prepend: lang | prepend: '/' | absolute_url }}{% endif %}</loc>
+                </url>
+            {% endif %}
+        {% endunless %}
+
+    {% endfor %}
+
+    {% for collection in site.collections %}
+
+        {% for node in site[collection.label] %}
+            <url>
+                <loc>{% if lang == site.default_lang %}{{ node.url | absolute_url }}{% else %}{{ node.url | prepend: lang | prepend: '/' | absolute_url }}{% endif %}</loc>
+            </url>
+        {% endfor %}
+
+    {% endfor %}
+
+{% endfor %}
+</urlset>
+{% endcomment %}
+
+
+
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{% for node in site.pages %}
+    {% unless site.exclude_from_localization contains node.path %}
+            {% if node.layout %}
+                <url>
+                    <loc>{% if lang == site.default_lang %}{{ node.url | absolute_url }}{% else %}{{ node.url | prepend: lang | absolute_url }}{% endif %}</loc>
+                    {% for lang in site.languages %}
+                    <xhtml:link rel="alternate" hreflang="{{ lang }}" href="{% if lang == site.default_lang %}{{ node.url | absolute_url }}{% else %}{{ node.url | prepend: lang | prepend: '/' | absolute_url }}{% endif %}"/>
+                    {% endfor %}
+                </url>
+            {% endif %}
+        {% for lang in site.languages %}
+        {% endfor %}
+    {% endunless %}
+{% endfor %}
+{% for collection in site.collections %}
+    {% for node in site[collection.label] %}
+        <url>
+            <loc>{% if lang == site.default_lang %}{{ node.url | absolute_url }}{% else %}{{ node.url | prepend: lang | absolute_url }}{% endif %}</loc>
+            {% for lang in site.languages %}
+            <xhtml:link rel="alternate" hreflang="{{ lang }}" href="{% if lang == site.default_lang %}{{ node.url | absolute_url }}{% else %}{{ node.url | prepend: lang | prepend: '/' | absolute_url }}{% endif %}"/>
+            {% endfor %}
+        </url>
+    {% endfor %}
+{% endfor %}
+</urlset>

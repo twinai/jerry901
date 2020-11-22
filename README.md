@@ -1,4 +1,4 @@
-# before starting this project  
+# Before running this project  
 ## Run    
  this command below on the root directory of your project folder
 ```bash
@@ -11,7 +11,7 @@
  $ git submodule update --init --recursive
 ```
 
-# publish  
+## publish  
  The sources to your master branch
 ```bash
  $ bundle exec rake publish

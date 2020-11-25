@@ -301,4 +301,4 @@ defaults:
 
 #languages
 languages: ["ko", "en"]
-exclude_from_localizations: ["javascript", "images", ]
+exclude_from_localizations: ["javascript", "images"]

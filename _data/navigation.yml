@@ -6,7 +6,7 @@ main:
      url: /about/
    - title: "Tags"
      url: /categories/
-#   - title: "All Posts"
-#     url: /allposts/
+   #- title: "Posts"
+   #  url: /allposts/
    #- title: "Sitemap"
    #  url: /sitemap/

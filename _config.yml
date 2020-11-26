@@ -302,3 +302,6 @@ defaults:
 #languages
 languages: ["ko", "en"]
 exclude_from_localizations: ["javascript", "images"]
+
+url: jerry-home.tplinkdns.com
+port: 4000

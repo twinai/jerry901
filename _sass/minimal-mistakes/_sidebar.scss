@@ -79,9 +79,12 @@
     position: absolute;
     top: 0;
     right: 0;
+    // left: 0;
     width: $right-sidebar-width-narrow;
     margin-right: -1 * $right-sidebar-width-narrow;
+    // margin-left: -1 * $right-sidebar-width-narrow;
     padding-left: 1em;
+    // padding-right: 1em;
     z-index: 10;
 
     &.sticky {
@@ -90,12 +93,14 @@
       position: sticky;
       top: 2em;
       float: right;
+      // float: left;
     }
   }
 
   @include breakpoint($x-large) {
     width: $right-sidebar-width;
     margin-right: -1 * $right-sidebar-width;
+    // margin-left: -1 * $right-sidebar-width;
   }
 }
 

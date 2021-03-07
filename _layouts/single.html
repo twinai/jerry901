@@ -40,9 +40,10 @@ layout: default
               <header><h4 class="nav__title"><i class="fas fa-{{ page.toc_icon | default: 'file-alt' }}"></i> {{ page.toc_label | default: site.data.ui-text[site.locale].toc_label | default: "On this page" }}</h4></header>
               {% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" %}
             </nav>
+            <!-- sidebar ad -->
+
             <div>
               <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-              <!-- sidebar ad -->
               <ins class="adsbygoogle"
                   style="display:block"
                   data-ad-client="ca-pub-4764055672560525"
@@ -52,8 +53,9 @@ layout: default
               <script>
                   (adsbygoogle = window.adsbygoogle || []).push({});
               </script>
-              <!-- sidebar ad end-->
              </div>
+
+            <!-- sidebar ad end-->
           </aside>
         {% endif %}
         {{ content }}

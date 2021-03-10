@@ -1,0 +1,856 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.18.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Node.js 어플리케이션에서 GET, POST 방식 요청 처리 | Blog dev.Hoo</title>
+<meta name="description" content="  이전 포스트에서는 Node.js 템플릿 엔진 Pug에 관해 포스팅했습니다. 이번 포스트에서는 GET 방식, POST 방식을 통해 요청된 데이터를 처리하는 방법에 대해 알아보겠습니다.    [Node.js] 템플릿 엔진 PUG 간단 사용법   ">
+
+
+  <meta name="author" content="Kwanghoo Park">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Blog dev.Hoo">
+<meta property="og:title" content="Node.js 어플리케이션에서 GET, POST 방식 요청 처리">
+<meta property="og:url" content="https://jerry901.github.io/2020/03/2020-03-06-02/">
+
+
+  <meta property="og:description" content="  이전 포스트에서는 Node.js 템플릿 엔진 Pug에 관해 포스팅했습니다. 이번 포스트에서는 GET 방식, POST 방식을 통해 요청된 데이터를 처리하는 방법에 대해 알아보겠습니다.    [Node.js] 템플릿 엔진 PUG 간단 사용법   ">
+
+
+
+  <meta property="og:image" content="https://jerry901.github.io/assets/images/banner.jpg">
+
+
+
+
+
+  <meta property="article:published_time" content="2020-03-06T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://jerry901.github.io/2020/03/2020-03-06-02/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kwanghoo Park",
+      "url": "https://jerry901.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-157752388-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-157752388-1');
+</script>
+<!-- Global site tag (gtag.js) - Google Analytics END-->
+
+<link rel="alternate" hreflang="ko" href="https://jerry901.github.io/">
+<link rel="alternate" hreflang="en" href="https://jerry901.github.io/en/">
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Blog dev.Hoo Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<link href="/assets/images/favicon.ico" rel="shortcut icon"/>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav" style="border-bottom: 1px dashed #cfd4d3;">
+        
+        <a class="site-title" href="/">
+          $ dev.Hoo
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about/" >About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button" style="padding-right: 0px;">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button" style="padding-left: 1em; padding-right: 0px;">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+	  <nav id="lang-sel" >
+	   <ul class="lang">
+	    
+		
+	    
+	    <li class="masthead_menu-item visible-links">
+	     <a href="/2020/03/2020-03-06-02/" class="enabled">Kor </a>|<a href="/en/2020/03/2020-03-06-02/"> Eng</a>
+		</li>
+		
+	  </ul>
+	 </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+
+
+
+
+<div class="page__hero"
+  style=" "
+>
+  
+    <img src="/assets/images/banner.jpg" alt="Node.js 어플리케이션에서 GET, POST 방식 요청 처리" class="page__hero-image">
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/bio-pic.jpg" alt="Kwanghoo Park" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Kwanghoo Park</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>No worries, I don’t know how to hack</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Suwon, South Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:pkhu2000@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/jerry901" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+            <li><a href="https://instagram.com/p.halo_" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+ 
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Node.js 어플리케이션에서 GET, POST 방식 요청 처리">
+    <meta itemprop="description" content="  이전 포스트에서는 Node.js 템플릿 엔진 Pug에 관해 포스팅했습니다. 이번 포스트에서는 GET 방식, POST 방식을 통해 요청된 데이터를 처리하는 방법에 대해 알아보겠습니다.  [Node.js] 템플릿 엔진 PUG 간단 사용법">
+    <meta itemprop="datePublished" content="2020-03-06T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Node.js 어플리케이션에서 GET, POST 방식 요청 처리
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  1 minute read
+
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#get-데이터-처리하기">GET 데이터 처리하기</a>
+    <ul>
+      <li><a href="#form_getpug-파일-생성">form_get.pug 파일 생성</a></li>
+      <li><a href="#getjs-파일-작성">get.js 파일 작성</a></li>
+    </ul>
+  </li>
+  <li><a href="#결과-확인">결과 확인</a></li>
+  <li><a href="#post-데이터-처리하기">POST 데이터 처리하기</a>
+    <ul>
+      <li><a href="#form_getpug-파일-생성-1">form_get.pug 파일 생성</a></li>
+      <li><a href="#body-parser-설치">body-parser 설치</a></li>
+      <li><a href="#postjs-파일-작성">post.js 파일 작성</a></li>
+    </ul>
+  </li>
+  <li><a href="#결과-확인-1">결과 확인</a></li>
+</ul>
+
+            </nav>
+            
+          </aside>
+        
+        <p>  이전 포스트에서는 Node.js 템플릿 엔진 <strong>Pug</strong>에 관해 포스팅했습니다. 이번 포스트에서는 GET 방식, POST 방식을 통해 요청된 데이터를 처리하는 방법에 대해 알아보겠습니다.</p>
+<ul>
+  <li><strong><a href="https://jerry901.github.io/2020/03/2020-03-06-01/">[Node.js] 템플릿 엔진 PUG 간단 사용법</a></strong></li>
+</ul>
+
+<h1 id="get-데이터-처리하기">GET 데이터 처리하기</h1>
+
+<h2 id="form_getpug-파일-생성">form_get.pug 파일 생성</h2>
+<p>  먼저 Input box, Text area, Submit 버튼으로 구성된 템플릿을 작성할 것입니다. 아래 템플릿으로 렌더링된 HTML 페이지는 submit 버튼을 클릭할 시 ‘/get_receiver’ 요청을 보냅니다.
+<code class="language-plaintext highlighter-rouge">form_get.pug</code> 파일을 다음과 같이 작성해주세요.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>doctype html
+html
+    head
+        meta(charset='utf-8')
+    body
+        form(action='/get_receiver' method='GET')
+            p
+                input(type='text' name='title')
+            p
+                textarea(name='description')
+            p
+                input(type='submit')
+</code></pre></div></div>
+
+<h2 id="getjs-파일-작성">get.js 파일 작성</h2>
+<p>  GET Method를 통해 들어온 요청의 데이터들은 Request 객체의 프로퍼티중 하나인 query에 담겨있습니다. 따라서 다음과 같이 get.js 파일을 작성해주세요.</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">pretty</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="nx">app</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">views</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./views</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">app</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">view engine</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">pug</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/form_get</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span> 
+        <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="dl">'</span><span class="s1">form_get</span><span class="dl">'</span><span class="p">);</span> 
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/get_receiver</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span> 
+        <span class="kd">var</span> <span class="nx">title</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">title</span><span class="p">;</span> 
+        <span class="kd">var</span> <span class="nx">description</span><span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">description</span><span class="p">;</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">title</span><span class="o">+</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="o">+</span><span class="nx">description</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Example app listening on port 3000!</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<h1 id="결과-확인">결과 확인</h1>
+<p>  먼저 <code class="language-plaintext highlighter-rouge">get.js</code>를 실행합니다.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>node get.js
+</code></pre></div></div>
+
+<p><img src="/assets/images/2020-03-04/2020-03-06-02-get-req.png" alt="ex_screenshot" /><br />
+<code class="language-plaintext highlighter-rouge">http://base_url/form_get</code>로 접근하면 Form 작성 페이지를 확인 할 수 있습니다. 데이터를 입력하고 제출 버튼을 클릭해보겠습니다.</p>
+
+<p><img src="/assets/images/2020-03-04/2020-03-06-02-get-res.png" alt="ex_screenshot" /><br />
+GET 메서드로 보낸 데이터가 성공적으로 처리되어 돌아왔음을 확인할 수 있습니다.</p>
+
+<h1 id="post-데이터-처리하기">POST 데이터 처리하기</h1>
+
+<h2 id="form_getpug-파일-생성-1">form_get.pug 파일 생성</h2>
+<p>  <code class="language-plaintext highlighter-rouge">form_post.pug</code> 파일을 다음과 같이 작성합니다. 내용은 <code class="language-plaintext highlighter-rouge">form_get.pug</code> 거의 비슷하지만 Form Tag의 Action이 POST Method로 변경되었습니다.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>doctype html
+html
+    head
+        meta(charset='utf-8')
+    body
+        form(action='/post_receiver' method='POST')
+            p
+                input(type='text' name='title')
+            p
+                textarea(name='description')
+            p
+                input(type='submit')
+</code></pre></div></div>
+<h2 id="body-parser-설치">body-parser 설치</h2>
+<p>  POST 요청을 처리하기 위해서는 Request 객체의 <strong>body</strong> 프로퍼티를 사용해야하는데, body 프로퍼티는 default로 <strong>undefined</strong>가 할당되어있습니다. 이 문제를 해결하기 위해서는 body-parser라는 node.js 모듈을 설치해야합니다. <del>웃깁니다. POST 요청을 처리하기위해 다른 모듈을 설치해야한다니..</del> 따라서 다음과 같이 body-parser를 설치해주세요.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>npm <span class="nb">install </span>body-parser
+</code></pre></div></div>
+<h2 id="postjs-파일-작성">post.js 파일 작성</h2>
+<p>  <code class="language-plaintext highlighter-rouge">get.js</code> 파일과 다른 점은 app 객체가 body-parser 모듈을 사용할 수 있도록 설정해준 것과, app.post() Method의 등장입니다. 다음과 같이 <code class="language-plaintext highlighter-rouge">post.js</code> 파일을 작성해 주세요. 무작정 복사해서 붙여넣기 보다는 한번 따라서 타이핑 해보는 것을 추천드립니다.</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">bodyParser</span><span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">body-parser</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">pretty</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<span class="nx">app</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">views</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./views</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">app</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">view engine</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">pug</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">bodyParser</span><span class="p">.</span><span class="nx">urlencoded</span><span class="p">({</span><span class="na">extended</span><span class="p">:</span> <span class="kc">false</span><span class="p">}));</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/form_post</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="dl">'</span><span class="s1">form_post</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="dl">'</span><span class="s1">/post_receiver</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">title</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">title</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">description</span><span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">description</span><span class="p">;</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">title</span><span class="o">+</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="o">+</span><span class="nx">description</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Example app listening on port 3000!</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<h1 id="결과-확인-1">결과 확인</h1>
+<p>  먼저 <code class="language-plaintext highlighter-rouge">post.js</code>를 실행합니다.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>node post.js
+</code></pre></div></div>
+<p><img src="/assets/images/2020-03-04/2020-03-06-02-post-req.png" alt="ex_screenshot" /><br />
+<code class="language-plaintext highlighter-rouge">http://base_url/form_post</code>로 접근하면 Form 작성 페이지를 확인 할 수 있습니다. 데이터를 입력하고 제출 버튼을 클릭해보겠습니다.</p>
+
+<p><img src="/assets/images/2020-03-04/2020-03-06-02-post-res.png" alt="ex_screenshot" /><br />
+POST 메서드로 보낸 데이터가 성공적으로 처리되어 돌아왔음을 확인할 수 있습니다.</p>
+
+        
+        <!-- contents bottom -->
+        <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4764055672560525"
+        data-ad-slot="9299002808"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+        <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+    <!--카테고리 태그에 href=# 붙는 현상 주석처리-->
+	
+    
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/node-js" class="page__taxonomy-item" rel="tag">Node.js</a>
+    
+    </span>
+  </p>
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-03-06T00:00:00+09:00">March 6, 2020</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Node.js+%EC%96%B4%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%EC%97%90%EC%84%9C+GET%2C+POST+%EB%B0%A9%EC%8B%9D+%EC%9A%94%EC%B2%AD+%EC%B2%98%EB%A6%AC%20https%3A%2F%2Fjerry901.github.io%2F2020%2F03%2F2020-03-06-02%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fjerry901.github.io%2F2020%2F03%2F2020-03-06-02%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fjerry901.github.io%2F2020%2F03%2F2020-03-06-02%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/2020/03/2020-03-06-01/" class="pagination--pager" title="Node.js 템플릿 엔진 PUG 사용법
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Leave a comment</h4>
+      <section id="utterances-comments"></section>
+    
+</div
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/2020-03-06-01/" rel="permalink">Node.js 템플릿 엔진 PUG 사용법
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  1 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">  오늘은 Node.js 의 템플릿 엔진 PUG의 설치 및 사용법에 대해 간단히 포스팅하겠습니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/2020-03-04-01/" rel="permalink">AWS 환경에 Node.js 어플리케이션 만들기
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">  오늘은 아마존 클라우드 컴퓨팅 서비스인 EC2를 이용하여 node.js 어플리케이션을 만드는 방법에 대해 포스팅하고자 합니다.
+
+References
+
+  자습서: Amazon EC2 인스턴스에서 Node.js 설치하기
+  생활코딩 : Server Side JavaScript
+
+...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/2020-02-21-01/" rel="permalink">HackerRank 알고리즘 해설 : Minimum Swaps 2
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  1 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">문제 해설
+우선, 테스트 케이스로 주어지는 모든 배열은 1 부터 n 까지의 모든 정수를 포함하며, 중복이 허용되지 않으므로, 특정 index에 존재하는 정수의 값은 sorting이 되었을 때 해당 정수가 위치해야만 하는 index의 정보를 담고있다고 말할 수 있다. 다시말해 모든 ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/2020-02-07-01/" rel="permalink">Linux 터미널에서 쉘 스크립트를 실행가능하도록 변경
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description"> 오늘은 리눅스 터미널에서 .sh 파일을 실행가능하게 만드는 방법에 대해 포스팅하고자 합니다.
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+         <!--날짜가 존재하는 게시물에만 광고 추가-->
+<!-- footer ad -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4764055672560525"
+     data-ad-slot="7486393535"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+<!-- start custom footer snippets -->
+<div class="page__footer-follow">
+  <ul class="social-icons">
+	  
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+	   
+
+    <li><a href="https://github.com/jerry901/"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i> Github</a></li>
+    <li><a href="mailto:pkhu2000@gmail.com"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+    <li><a href="https://www.instagram.com/p.halo_/"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Insta</a></li>
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-copyright">Copyright &copy; 2021 Kwanghoo Park<br>All rights reserved.<br> MIT License</div>
+
+<!-- <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  </ul>
+</div> -->
+
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    <script>
+  'use strict';
+
+  (function() {
+    var commentContainer = document.querySelector('#utterances-comments');
+
+    if (!commentContainer) {
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('repo', 'jerry901/jerry901.github.io');
+    script.setAttribute('issue-term', 'pathname');
+    script.setAttribute('theme', 'github-light');
+    script.setAttribute('crossorigin', 'anonymous');
+
+    commentContainer.appendChild(script);
+  })();
+</script>
+
+  
+
+
+
+
+
+  </body>
+</html>

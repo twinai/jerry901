@@ -1,0 +1,807 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.18.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Node.js 템플릿 엔진 PUG 사용법 | Blog dev.Hoo</title>
+<meta name="description" content="  오늘은 Node.js 의 템플릿 엔진 PUG의 설치 및 사용법에 대해 간단히 포스팅하겠습니다.  ">
+
+
+  <meta name="author" content="Kwanghoo Park">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Blog dev.Hoo">
+<meta property="og:title" content="Node.js 템플릿 엔진 PUG 사용법">
+<meta property="og:url" content="https://jerry901.github.io/2020/03/2020-03-06-01/">
+
+
+  <meta property="og:description" content="  오늘은 Node.js 의 템플릿 엔진 PUG의 설치 및 사용법에 대해 간단히 포스팅하겠습니다.  ">
+
+
+
+  <meta property="og:image" content="https://jerry901.github.io/assets/images/banner.jpg">
+
+
+
+
+
+  <meta property="article:published_time" content="2020-03-06T00:00:00+09:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://jerry901.github.io/2020/03/2020-03-06-01/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Kwanghoo Park",
+      "url": "https://jerry901.github.io/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-157752388-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-157752388-1');
+</script>
+<!-- Global site tag (gtag.js) - Google Analytics END-->
+
+<link rel="alternate" hreflang="ko" href="https://jerry901.github.io/">
+<link rel="alternate" hreflang="en" href="https://jerry901.github.io/en/">
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Blog dev.Hoo Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<link href="/assets/images/favicon.ico" rel="shortcut icon"/>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav" style="border-bottom: 1px dashed #cfd4d3;">
+        
+        <a class="site-title" href="/">
+          $ dev.Hoo
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/about/" >About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button" style="padding-right: 0px;">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button" style="padding-left: 1em; padding-right: 0px;">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+	  <nav id="lang-sel" >
+	   <ul class="lang">
+	    
+		
+	    
+	    <li class="masthead_menu-item visible-links">
+	     <a href="/2020/03/2020-03-06-01/" class="enabled">Kor </a>|<a href="/en/2020/03/2020-03-06-01/"> Eng</a>
+		</li>
+		
+	  </ul>
+	 </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+
+
+
+
+<div class="page__hero"
+  style=" "
+>
+  
+    <img src="/assets/images/banner.jpg" alt="Node.js 템플릿 엔진 PUG 사용법" class="page__hero-image">
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/bio-pic.jpg" alt="Kwanghoo Park" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Kwanghoo Park</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>No worries, I don’t know how to hack</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Suwon, South Korea</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:pkhu2000@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/jerry901" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+            <li><a href="https://instagram.com/p.halo_" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+ 
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Node.js 템플릿 엔진 PUG 사용법">
+    <meta itemprop="description" content="  오늘은 Node.js 의 템플릿 엔진 PUG의 설치 및 사용법에 대해 간단히 포스팅하겠습니다.">
+    <meta itemprop="datePublished" content="2020-03-06T00:00:00+09:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Node.js 템플릿 엔진 PUG 사용법
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  1 minute read
+
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#template-engine-">Template Engine ?</a></li>
+  <li><a href="#pug-설치">PUG 설치</a></li>
+  <li><a href="#temppug-파일-생성">temp.pug 파일 생성</a></li>
+  <li><a href="#appjs-작성">app.js 작성</a></li>
+  <li><a href="#결과-확인">결과 확인</a></li>
+</ul>
+
+            </nav>
+            
+            <!-- sidebar ad -->
+            <div style="margin-top:10px">
+              <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+              <ins class="adsbygoogle"
+                  style="display:block"
+                  data-ad-client="ca-pub-4764055672560525"
+                  data-ad-slot="3099043075"
+                  data-ad-format="auto"
+                  data-full-width-responsive="true"></ins>
+              <script>
+                  (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+             </div>
+
+            <!-- sidebar ad end-->
+            
+          </aside>
+        
+        <p>  오늘은 Node.js 의 템플릿 엔진 <strong><em>PUG</em></strong>의 설치 및 사용법에 대해 간단히 포스팅하겠습니다.</p>
+
+<h1 id="template-engine-">Template Engine ?</h1>
+<p>  템플릿 엔진은 동적인 데이터 결과를 정적으로 구성되어있는 <strong><em>틀</em></strong>에 끼워 넣기위해 사용됩니다. 
+예를들면 사용자 정보 조회 페이지와 같은 경우, <strong><em>기본적인 틀(HTML)은 같지만</em></strong>, 각 사용자에게 <strong><em>독립적인 데이터</em></strong>를 제공해야 합니다. 이러한 경우, 기본적인 틀은 미리 작성해두고 새로운 조회 데이터만 틀에 끼워넣어 응답을 보낸다면 업무가 훨씬 수월해지겠죠?</p>
+
+<h1 id="pug-설치">PUG 설치</h1>
+<p>  npm 프로젝트 디렉토리로 이동 후 먼저 <strong><em>core-js</em></strong>를 업그레이드 해줍니다. (이걸 업데이트하지 않으니 몇가지 오류가 뜨더라구요…)</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>npm update core-js 
+</code></pre></div></div>
+<p>pug를 설치하고, npm project root directory에 views 폴더를 생성합니다. –save 옵션을 입력하면 package.json 파일에 의존성이 기록되어 추후 모듈 관리가 편리합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>npm <span class="nb">install </span>pug <span class="nt">--save</span>
+ <span class="nv">$ </span><span class="nb">mkdir </span>views
+</code></pre></div></div>
+
+<h1 id="temppug-파일-생성">temp.pug 파일 생성</h1>
+<p>  views 폴더로 이동해 temp.pub 파일을 생성하고 다음과 같이 입력합니다.
+.pug 파일에서 태그 간의 상호 계층 구조는 <strong><em>들여쓰기</em></strong>로 표현되는데, rendering 과정에서 템플릿 엔진은 위와 같이 간소화 된 코드들을 <strong><em>HTML 태그들로 변환</em></strong>해줍니다. 또한 간단한 로직을 구현할 수도 있습니다. 그러나 pub 파일에서는 Controller에서 넘겨받은 데이터를 출력하기 위해 ‘=’ 연산자를 사용하므로, 대입 연산이라는 것을 명시해주기 위해 반드시 문장 맨 앞에 ‘-‘를 입력해야 합니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>html
+    head
+        title= _title
+    body
+        h1 hello Pug!
+        ul
+            - for(var i=0; i&lt;5; i++)
+                li coding
+        div= time
+</code></pre></div></div>
+
+<h1 id="appjs-작성">app.js 작성</h1>
+<p>  다음과 같은 내용을 app.js에 입력합니다.
+res.render() 메서드는 Key : value의 형식의 두번째 파라미터를 템플릿 엔진에 넘겨주고, 넘겨진 키는 temp.pug 파일에서 <strong><em>변수로서 사용할 수 있습니다</em></strong>. 
+이것이 템플릿 엔진을 사용하는 핵심적인 이유라고 할 수 있습니다.</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">locals</span><span class="p">.</span><span class="nx">pretty</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// beatify the html code made with template engine</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">views</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./views</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// set the directory where your template files exist</span>
+<span class="nx">app</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="dl">'</span><span class="s1">view engine</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">pug</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// set which template engine to use</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/template</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span> <span class="c1">// routing the request</span>
+     <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="dl">'</span><span class="s1">temp</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span><span class="na">time</span><span class="p">:</span> <span class="nb">Date</span><span class="p">(),</span> <span class="na">_title</span><span class="p">:</span> <span class="dl">'</span><span class="s1">PUG</span><span class="dl">'</span><span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Example app listening on port 3000!</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<h1 id="결과-확인">결과 확인</h1>
+<p>  http://localhost:3000/template (local server의 경우) 또는 http://AWS_PUBLIC_DNS:3000/template:3000 으로 접근하면 결과를 확인할 수 있습니다.</p>
+
+<p><img src="/assets/images/2020-03-04/2020-03-06-01.png" alt="ex_screenshot" /></p>
+
+        
+        <!-- contents bottom -->
+        <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-4764055672560525"
+        data-ad-slot="9299002808"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+        <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+    <!--카테고리 태그에 href=# 붙는 현상 주석처리-->
+	
+    
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/linux" class="page__taxonomy-item" rel="tag">Linux</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/node-js" class="page__taxonomy-item" rel="tag">Node.js</a>
+    
+    </span>
+  </p>
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-03-06T00:00:00+09:00">March 6, 2020</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Node.js+%ED%85%9C%ED%94%8C%EB%A6%BF+%EC%97%94%EC%A7%84+PUG+%EC%82%AC%EC%9A%A9%EB%B2%95%20https%3A%2F%2Fjerry901.github.io%2F2020%2F03%2F2020-03-06-01%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fjerry901.github.io%2F2020%2F03%2F2020-03-06-01%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fjerry901.github.io%2F2020%2F03%2F2020-03-06-01%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/2020/03/2020-03-04-01/" class="pagination--pager" title="AWS 환경에 Node.js 어플리케이션 만들기
+">Previous</a>
+    
+    
+      <a href="/2020/03/2020-03-06-02/" class="pagination--pager" title="Node.js 어플리케이션에서 GET, POST 방식 요청 처리
+">Next</a>
+    
+  </nav>
+
+    </div>
+    
+      <div class="page__comments">
+  
+  
+      <h4 class="page__comments-title">Leave a comment</h4>
+      <section id="utterances-comments"></section>
+    
+</div
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/2020-03-06-02/" rel="permalink">Node.js 어플리케이션에서 GET, POST 방식 요청 처리
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  2 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">  이전 포스트에서는 Node.js 템플릿 엔진 Pug에 관해 포스팅했습니다. 이번 포스트에서는 GET 방식, POST 방식을 통해 요청된 데이터를 처리하는 방법에 대해 알아보겠습니다.
+
+  [Node.js] 템플릿 엔진 PUG 간단 사용법
+
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/03/2020-03-04-01/" rel="permalink">AWS 환경에 Node.js 어플리케이션 만들기
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">  오늘은 아마존 클라우드 컴퓨팅 서비스인 EC2를 이용하여 node.js 어플리케이션을 만드는 방법에 대해 포스팅하고자 합니다.
+
+References
+
+  자습서: Amazon EC2 인스턴스에서 Node.js 설치하기
+  생활코딩 : Server Side JavaScript
+
+...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/2020-02-21-01/" rel="permalink">HackerRank 알고리즘 해설 : Minimum Swaps 2
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  1 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">문제 해설
+우선, 테스트 케이스로 주어지는 모든 배열은 1 부터 n 까지의 모든 정수를 포함하며, 중복이 허용되지 않으므로, 특정 index에 존재하는 정수의 값은 sorting이 되었을 때 해당 정수가 위치해야만 하는 index의 정보를 담고있다고 말할 수 있다. 다시말해 모든 ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/2020/02/2020-02-07-01/" rel="permalink">Linux 터미널에서 쉘 스크립트를 실행가능하도록 변경
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  less than 1 minute read
+
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description"> 오늘은 리눅스 터미널에서 .sh 파일을 실행가능하게 만드는 방법에 대해 포스팅하고자 합니다.
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+         <!--날짜가 존재하는 게시물에만 광고 추가-->
+<!-- footer ad -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-4764055672560525"
+     data-ad-slot="7486393535"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+<!-- start custom footer snippets -->
+<div class="page__footer-follow">
+  <ul class="social-icons">
+	  
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+	   
+
+    <li><a href="https://github.com/jerry901/"><i class="fab fa-fw fa-github-square" aria-hidden="true"></i> Github</a></li>
+    <li><a href="mailto:pkhu2000@gmail.com"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> Email</a></li>
+    <li><a href="https://www.instagram.com/p.halo_/"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Insta</a></li>
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<!-- end custom footer snippets -->
+
+        <div class="page__footer-copyright">Copyright &copy; 2021 Kwanghoo Park<br>All rights reserved.<br> MIT License</div>
+
+<!-- <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  </ul>
+</div> -->
+
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    <script>
+  'use strict';
+
+  (function() {
+    var commentContainer = document.querySelector('#utterances-comments');
+
+    if (!commentContainer) {
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('repo', 'jerry901/jerry901.github.io');
+    script.setAttribute('issue-term', 'pathname');
+    script.setAttribute('theme', 'github-light');
+    script.setAttribute('crossorigin', 'anonymous');
+
+    commentContainer.appendChild(script);
+  })();
+</script>
+
+  
+
+
+
+
+
+  </body>
+</html>

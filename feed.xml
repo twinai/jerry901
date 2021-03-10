@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ko"><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://jerry901.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://jerry901.github.io/" rel="alternate" type="text/html" hreflang="ko" /><updated>2021-03-11T00:40:40+09:00</updated><id>https://jerry901.github.io/feed.xml</id><title type="html">Blog dev.Hoo</title><subtitle>Web / Linux / Java / C</subtitle><author><name>Kwanghoo Park</name></author><entry><title type="html">Node.js 템플릿 엔진 PUG 사용법</title><link href="https://jerry901.github.io/2020/03/2020-03-06-01/" rel="alternate" type="text/html" title="Node.js 템플릿 엔진 PUG 사용법" /><published>2020-03-06T00:00:00+09:00</published><updated>2020-03-06T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/03/01</id><content type="html" xml:base="https://jerry901.github.io/2020/03/2020-03-06-01/">&lt;p&gt;  오늘은 Node.js 의 템플릿 엔진 &lt;strong&gt;&lt;em&gt;PUG&lt;/em&gt;&lt;/strong&gt;의 설치 및 사용법에 대해 간단히 포스팅하겠습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;template-engine-&quot;&gt;Template Engine ?&lt;/h1&gt;
+&lt;p&gt;  템플릿 엔진은 동적인 데이터 결과를 정적으로 구성되어있는 &lt;strong&gt;&lt;em&gt;틀&lt;/em&gt;&lt;/strong&gt;에 끼워 넣기위해 사용됩니다. 
+예를들면 사용자 정보 조회 페이지와 같은 경우, &lt;strong&gt;&lt;em&gt;기본적인 틀(HTML)은 같지만&lt;/em&gt;&lt;/strong&gt;, 각 사용자에게 &lt;strong&gt;&lt;em&gt;독립적인 데이터&lt;/em&gt;&lt;/strong&gt;를 제공해야 합니다. 이러한 경우, 기본적인 틀은 미리 작성해두고 새로운 조회 데이터만 틀에 끼워넣어 응답을 보낸다면 업무가 훨씬 수월해지겠죠?&lt;/p&gt;
+
+&lt;h1 id=&quot;pug-설치&quot;&gt;PUG 설치&lt;/h1&gt;
+&lt;p&gt;  npm 프로젝트 디렉토리로 이동 후 먼저 &lt;strong&gt;&lt;em&gt;core-js&lt;/em&gt;&lt;/strong&gt;를 업그레이드 해줍니다. (이걸 업데이트하지 않으니 몇가지 오류가 뜨더라구요…)&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm update core-js 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;pug를 설치하고, npm project root directory에 views 폴더를 생성합니다. –save 옵션을 입력하면 package.json 파일에 의존성이 기록되어 추후 모듈 관리가 편리합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;pug &lt;span class=&quot;nt&quot;&gt;--save&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;views
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;temppug-파일-생성&quot;&gt;temp.pug 파일 생성&lt;/h1&gt;
+&lt;p&gt;  views 폴더로 이동해 temp.pub 파일을 생성하고 다음과 같이 입력합니다.
+.pug 파일에서 태그 간의 상호 계층 구조는 &lt;strong&gt;&lt;em&gt;들여쓰기&lt;/em&gt;&lt;/strong&gt;로 표현되는데, rendering 과정에서 템플릿 엔진은 위와 같이 간소화 된 코드들을 &lt;strong&gt;&lt;em&gt;HTML 태그들로 변환&lt;/em&gt;&lt;/strong&gt;해줍니다. 또한 간단한 로직을 구현할 수도 있습니다. 그러나 pub 파일에서는 Controller에서 넘겨받은 데이터를 출력하기 위해 ‘=’ 연산자를 사용하므로, 대입 연산이라는 것을 명시해주기 위해 반드시 문장 맨 앞에 ‘-‘를 입력해야 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;html
+    head
+        title= _title
+    body
+        h1 hello Pug!
+        ul
+            - for(var i=0; i&amp;lt;5; i++)
+                li coding
+        div= time
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;appjs-작성&quot;&gt;app.js 작성&lt;/h1&gt;
+&lt;p&gt;  다음과 같은 내용을 app.js에 입력합니다.
+res.render() 메서드는 Key : value의 형식의 두번째 파라미터를 템플릿 엔진에 넘겨주고, 넘겨진 키는 temp.pug 파일에서 &lt;strong&gt;&lt;em&gt;변수로서 사용할 수 있습니다&lt;/em&gt;&lt;/strong&gt;. 
+이것이 템플릿 엔진을 사용하는 핵심적인 이유라고 할 수 있습니다.&lt;/p&gt;
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pretty&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// beatify the html code made with template engine&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// set the directory where your template files exist&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;view engine&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;pug&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// set which template engine to use&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/template&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// routing the request&lt;/span&gt;
+     &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;_title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;PUG&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Example app listening on port 3000!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;결과-확인&quot;&gt;결과 확인&lt;/h1&gt;
+&lt;p&gt;  http://localhost:3000/template (local server의 경우) 또는 http://AWS_PUBLIC_DNS:3000/template:3000 으로 접근하면 결과를 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-01.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><category term="Node.js" /><summary type="html">  오늘은 Node.js 의 템플릿 엔진 PUG의 설치 및 사용법에 대해 간단히 포스팅하겠습니다.</summary></entry><entry><title type="html">Node.js 어플리케이션에서 GET, POST 방식 요청 처리</title><link href="https://jerry901.github.io/2020/03/2020-03-06-02/" rel="alternate" type="text/html" title="Node.js 어플리케이션에서 GET, POST 방식 요청 처리" /><published>2020-03-06T00:00:00+09:00</published><updated>2020-03-06T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/03/02</id><content type="html" xml:base="https://jerry901.github.io/2020/03/2020-03-06-02/">&lt;p&gt;  이전 포스트에서는 Node.js 템플릿 엔진 &lt;strong&gt;Pug&lt;/strong&gt;에 관해 포스팅했습니다. 이번 포스트에서는 GET 방식, POST 방식을 통해 요청된 데이터를 처리하는 방법에 대해 알아보겠습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://jerry901.github.io/2020/03/2020-03-06-01/&quot;&gt;[Node.js] 템플릿 엔진 PUG 간단 사용법&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;get-데이터-처리하기&quot;&gt;GET 데이터 처리하기&lt;/h1&gt;
+
+&lt;h2 id=&quot;form_getpug-파일-생성&quot;&gt;form_get.pug 파일 생성&lt;/h2&gt;
+&lt;p&gt;  먼저 Input box, Text area, Submit 버튼으로 구성된 템플릿을 작성할 것입니다. 아래 템플릿으로 렌더링된 HTML 페이지는 submit 버튼을 클릭할 시 ‘/get_receiver’ 요청을 보냅니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form_get.pug&lt;/code&gt; 파일을 다음과 같이 작성해주세요.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;doctype html
+html
+    head
+        meta(charset='utf-8')
+    body
+        form(action='/get_receiver' method='GET')
+            p
+                input(type='text' name='title')
+            p
+                textarea(name='description')
+            p
+                input(type='submit')
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;getjs-파일-작성&quot;&gt;get.js 파일 작성&lt;/h2&gt;
+&lt;p&gt;  GET Method를 통해 들어온 요청의 데이터들은 Request 객체의 프로퍼티중 하나인 query에 담겨있습니다. 따라서 다음과 같이 get.js 파일을 작성해주세요.&lt;/p&gt;
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pretty&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;view engine&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;pug&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/form_get&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt; 
+        &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;form_get&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/get_receiver&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt; 
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;, &lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Example app listening on port 3000!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;결과-확인&quot;&gt;결과 확인&lt;/h1&gt;
+&lt;p&gt;  먼저 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get.js&lt;/code&gt;를 실행합니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;node get.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-02-get-req.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://base_url/form_get&lt;/code&gt;로 접근하면 Form 작성 페이지를 확인 할 수 있습니다. 데이터를 입력하고 제출 버튼을 클릭해보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-02-get-res.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+GET 메서드로 보낸 데이터가 성공적으로 처리되어 돌아왔음을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;post-데이터-처리하기&quot;&gt;POST 데이터 처리하기&lt;/h1&gt;
+
+&lt;h2 id=&quot;form_getpug-파일-생성-1&quot;&gt;form_get.pug 파일 생성&lt;/h2&gt;
+&lt;p&gt;  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form_post.pug&lt;/code&gt; 파일을 다음과 같이 작성합니다. 내용은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form_get.pug&lt;/code&gt; 거의 비슷하지만 Form Tag의 Action이 POST Method로 변경되었습니다.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;doctype html
+html
+    head
+        meta(charset='utf-8')
+    body
+        form(action='/post_receiver' method='POST')
+            p
+                input(type='text' name='title')
+            p
+                textarea(name='description')
+            p
+                input(type='submit')
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;body-parser-설치&quot;&gt;body-parser 설치&lt;/h2&gt;
+&lt;p&gt;  POST 요청을 처리하기 위해서는 Request 객체의 &lt;strong&gt;body&lt;/strong&gt; 프로퍼티를 사용해야하는데, body 프로퍼티는 default로 &lt;strong&gt;undefined&lt;/strong&gt;가 할당되어있습니다. 이 문제를 해결하기 위해서는 body-parser라는 node.js 모듈을 설치해야합니다. &lt;del&gt;웃깁니다. POST 요청을 처리하기위해 다른 모듈을 설치해야한다니..&lt;/del&gt; 따라서 다음과 같이 body-parser를 설치해주세요.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;body-parser
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;postjs-파일-작성&quot;&gt;post.js 파일 작성&lt;/h2&gt;
+&lt;p&gt;  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get.js&lt;/code&gt; 파일과 다른 점은 app 객체가 body-parser 모듈을 사용할 수 있도록 설정해준 것과, app.post() Method의 등장입니다. 다음과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;post.js&lt;/code&gt; 파일을 작성해 주세요. 무작정 복사해서 붙여넣기 보다는 한번 따라서 타이핑 해보는 것을 추천드립니다.&lt;/p&gt;
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bodyParser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;body-parser&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pretty&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;view engine&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;pug&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;use&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;bodyParser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;urlencoded&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;extended&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}));&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/form_post&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;form_post&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/post_receiver&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;, &lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Example app listening on port 3000!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;결과-확인-1&quot;&gt;결과 확인&lt;/h1&gt;
+&lt;p&gt;  먼저 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;post.js&lt;/code&gt;를 실행합니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;node post.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-02-post-req.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://base_url/form_post&lt;/code&gt;로 접근하면 Form 작성 페이지를 확인 할 수 있습니다. 데이터를 입력하고 제출 버튼을 클릭해보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-02-post-res.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+POST 메서드로 보낸 데이터가 성공적으로 처리되어 돌아왔음을 확인할 수 있습니다.&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><category term="Node.js" /><summary type="html">  이전 포스트에서는 Node.js 템플릿 엔진 Pug에 관해 포스팅했습니다. 이번 포스트에서는 GET 방식, POST 방식을 통해 요청된 데이터를 처리하는 방법에 대해 알아보겠습니다. [Node.js] 템플릿 엔진 PUG 간단 사용법</summary></entry><entry><title type="html">AWS 환경에 Node.js 어플리케이션 만들기</title><link href="https://jerry901.github.io/2020/03/2020-03-04-01/" rel="alternate" type="text/html" title="AWS 환경에 Node.js 어플리케이션 만들기" /><published>2020-03-04T00:00:00+09:00</published><updated>2020-03-04T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/03/01</id><content type="html" xml:base="https://jerry901.github.io/2020/03/2020-03-04-01/">&lt;p&gt;  오늘은 아마존 클라우드 컴퓨팅 서비스인 EC2를 이용하여 node.js 어플리케이션을 만드는 방법에 대해 포스팅하고자 합니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;references&quot;&gt;References&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html&quot;&gt;자습서: Amazon EC2 인스턴스에서 Node.js 설치하기&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://www.youtube.com/playlist?list=PLuHgQVnccGMBnrdKRODJmbH7UZ2A48LBK&quot;&gt;생활코딩 : Server Side JavaScript&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;프로젝트-생성&quot;&gt;프로젝트 생성&lt;/h1&gt;
+
+&lt;p&gt;  먼저 작성한 node.js 파일을 저장할 프로젝트 디렉토리를 생성 후 해당 폴더로 이동한다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;node&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ./node
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;다음으로 현재 경로를 npm 프로젝트로 초기화한다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ npm init&lt;/code&gt; 명령어를 실행하면 몇가지 정보들을 입력하라고 하는데 그냥 빈칸으로 두고 Enter키를 입력해도 무방하다.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm init
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;그리고나서 express.js를 설치한다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--save&lt;/span&gt; express
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;examplejs-작성&quot;&gt;example.js 작성&lt;/h1&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; vi example.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;아래 내용은 express.js 공식 홈페이지에 올라와있는 예제이다.&lt;/p&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Hello World!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Example app listening on port 3000!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;ec2-인바운드-정책에-포트-추가&quot;&gt;EC2 인바운드 정책에 포트 추가&lt;/h1&gt;
+&lt;p&gt;  다음과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS Home &amp;gt; EC2 &amp;gt; 네트워크 및 보안 &amp;gt; 보안 그룹&lt;/code&gt;으로 이동해 현재 AWS 인스턴스의 사용자정의 TCP 규칙에 3000 포트를 추가한다. (하단의 “인바운드” 탭을 누른후 “편집” 버튼을 클릭)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-04-01-ko.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;examplejs-실행&quot;&gt;example.js 실행&lt;/h1&gt;
+&lt;p&gt;  다시 AWS 터미널로 돌아가서 example.js를 실행시킨다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;node example.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;결과-확인&quot;&gt;결과 확인&lt;/h1&gt;
+&lt;p&gt;  http://AWS_public_DNS:3000 로 접근 시 Hello World!가 정상적으로 출력되는 것을 확인할 수 있다. Public DNS는 인스턴스 목록에서 확인할 수 있는 &lt;strong&gt;&lt;em&gt;ec1-23-456-789-000.ap-northeast-0.compute.amazonaws.com&lt;/em&gt;&lt;/strong&gt; 형식의 주소이다.&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><category term="AWS" /><category term="Node.js" /><summary type="html">  오늘은 아마존 클라우드 컴퓨팅 서비스인 EC2를 이용하여 node.js 어플리케이션을 만드는 방법에 대해 포스팅하고자 합니다. References 자습서: Amazon EC2 인스턴스에서 Node.js 설치하기 생활코딩 : Server Side JavaScript 프로젝트 생성   먼저 작성한 node.js 파일을 저장할 프로젝트 디렉토리를 생성 후 해당 폴더로 이동한다. $ mkdir node; cd ./node 다음으로 현재 경로를 npm 프로젝트로 초기화한다. $ npm init 명령어를 실행하면 몇가지 정보들을 입력하라고 하는데 그냥 빈칸으로 두고 Enter키를 입력해도 무방하다. $ npm init 그리고나서 express.js를 설치한다. $ npm install --save express example.js 작성 vi example.js 아래 내용은 express.js 공식 홈페이지에 올라와있는 예제이다. var express = require('express'); var app = express(); app.get('/', function (req, res) { res.send('Hello World!'); }); app.listen(3000, function () { console.log('Example app listening on port 3000!'); }); EC2 인바운드 정책에 포트 추가   다음과 같이 AWS Home &amp;gt; EC2 &amp;gt; 네트워크 및 보안 &amp;gt; 보안 그룹으로 이동해 현재 AWS 인스턴스의 사용자정의 TCP 규칙에 3000 포트를 추가한다. (하단의 “인바운드” 탭을 누른후 “편집” 버튼을 클릭) example.js 실행   다시 AWS 터미널로 돌아가서 example.js를 실행시킨다. $ node example.js 결과 확인   http://AWS_public_DNS:3000 로 접근 시 Hello World!가 정상적으로 출력되는 것을 확인할 수 있다. Public DNS는 인스턴스 목록에서 확인할 수 있는 ec1-23-456-789-000.ap-northeast-0.compute.amazonaws.com 형식의 주소이다.</summary></entry><entry><title type="html">HackerRank 알고리즘 해설 : Minimum Swaps 2</title><link href="https://jerry901.github.io/2020/02/2020-02-21-01/" rel="alternate" type="text/html" title="HackerRank 알고리즘 해설 : Minimum Swaps 2" /><published>2020-02-21T00:00:00+09:00</published><updated>2020-02-21T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/02/01</id><content type="html" xml:base="https://jerry901.github.io/2020/02/2020-02-21-01/">&lt;h1 id=&quot;문제-해설&quot;&gt;문제 해설&lt;/h1&gt;
+&lt;p&gt;우선, 테스트 케이스로 주어지는 모든 배열은 1 부터 n 까지의 모든 정수를 포함하며, 중복이 허용되지 않으므로, 특정 index에 존재하는 정수의 값은 sorting이 되었을 때 해당 정수가 위치해야만 하는 index의 정보를 담고있다고 말할 수 있다. 다시말해 모든 배열 요소들은 &lt;strong&gt;arr[x] = x + 1&lt;/strong&gt;를 만족해야만 한다 (ex. &lt;strong&gt;arr[4] = 5&lt;/strong&gt;). 따라서 swap 함수를 이용해 위치를 바꾸어야하는 경우는 arr[i] != i+1인 경우이다.
+ 최소한의 swap을 통해 배열을 정렬하기 위한 대략적인 알고리즘은 다음과 같다.&lt;br /&gt;
+ (배열의 인덱스는 0부터 시작하지만 배열 내의 정수는 1 부터 시작한다. 따라서 연산 과정에서 인덱스에 +1 또는 -1을 해야하므로 머리가 약간 아플 수 있음)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;arr 전체를 반복문을 돈다.&lt;/li&gt;
+  &lt;li&gt;arr[i] != i+1 이라면 arr[i] 와 arr[arr[i] - 1]를 swap()한다.&lt;/li&gt;
+  &lt;li&gt;만약 swap을 한 이후에도 arr[i] != i+1 이라면 arr[i] == i+1이 될 때 까지 두번째 과정을 반복한다.&lt;/li&gt;
+  &lt;li&gt;i++&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;예시&quot;&gt;예시&lt;/h1&gt;
+&lt;p&gt;{5, 3, 1, 2, 6, 4} swap(0, 4) arr[0] != 1 이므로, arr[0]을 arr&lt;a href=&quot;5번째 인덱스&quot;&gt;4&lt;/a&gt;와 교환한다.&lt;/p&gt;
+
+&lt;p&gt;{6, 3, 1, 2, &lt;strong&gt;5&lt;/strong&gt;, 4} swap(0, 5)&lt;/p&gt;
+
+&lt;p&gt;{4, 3, 1, 2, &lt;strong&gt;5&lt;/strong&gt;, &lt;strong&gt;6&lt;/strong&gt;} swap(0, 3)&lt;/p&gt;
+
+&lt;p&gt;{2, 3, 1, &lt;strong&gt;4&lt;/strong&gt;, &lt;strong&gt;5&lt;/strong&gt;, &lt;strong&gt;6&lt;/strong&gt;} swap(0, 1)&lt;/p&gt;
+
+&lt;p&gt;{3, &lt;strong&gt;2&lt;/strong&gt;, 1, &lt;strong&gt;4&lt;/strong&gt;, &lt;strong&gt;5&lt;/strong&gt;, &lt;strong&gt;6&lt;/strong&gt;} swap(0, 2)&lt;/p&gt;
+
+&lt;p&gt;{&lt;strong&gt;1&lt;/strong&gt;, &lt;strong&gt;2&lt;/strong&gt;, &lt;strong&gt;3&lt;/strong&gt;, &lt;strong&gt;4&lt;/strong&gt;, &lt;strong&gt;5&lt;/strong&gt;, &lt;strong&gt;6&lt;/strong&gt;}&lt;/p&gt;
+
+&lt;p&gt;위와 같은 경우에는, &lt;strong&gt;i == 0&lt;/strong&gt; 에서 모든 sorting이 완료된다.&lt;/p&gt;
+
+&lt;h1 id=&quot;소스-코드&quot;&gt;소스 코드&lt;/h1&gt;
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Written in c++&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_of_swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Changed arr to global variable&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+		
+    &lt;span class=&quot;n&quot;&gt;num_of_swap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Complete the minimumSwaps function below.&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;minimumSwaps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+		
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_of_swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Kwanghoo Park</name></author><category term="HackerRank" /><category term="Algorithms" /><summary type="html">문제 해설 우선, 테스트 케이스로 주어지는 모든 배열은 1 부터 n 까지의 모든 정수를 포함하며, 중복이 허용되지 않으므로, 특정 index에 존재하는 정수의 값은 sorting이 되었을 때 해당 정수가 위치해야만 하는 index의 정보를 담고있다고 말할 수 있다. 다시말해 모든 배열 요소들은 arr[x] = x + 1를 만족해야만 한다 (ex. arr[4] = 5). 따라서 swap 함수를 이용해 위치를 바꾸어야하는 경우는 arr[i] != i+1인 경우이다. 최소한의 swap을 통해 배열을 정렬하기 위한 대략적인 알고리즘은 다음과 같다. (배열의 인덱스는 0부터 시작하지만 배열 내의 정수는 1 부터 시작한다. 따라서 연산 과정에서 인덱스에 +1 또는 -1을 해야하므로 머리가 약간 아플 수 있음) arr 전체를 반복문을 돈다. arr[i] != i+1 이라면 arr[i] 와 arr[arr[i] - 1]를 swap()한다. 만약 swap을 한 이후에도 arr[i] != i+1 이라면 arr[i] == i+1이 될 때 까지 두번째 과정을 반복한다. i++</summary></entry><entry><title type="html">Linux 터미널에서 쉘 스크립트를 실행가능하도록 변경</title><link href="https://jerry901.github.io/2020/02/2020-02-07-01/" rel="alternate" type="text/html" title="Linux 터미널에서 쉘 스크립트를 실행가능하도록 변경" /><published>2020-02-07T00:00:00+09:00</published><updated>2020-02-07T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/02/01</id><content type="html" xml:base="https://jerry901.github.io/2020/02/2020-02-07-01/">&lt;p&gt; 오늘은 리눅스 터미널에서 .sh 파일을 실행가능하게 만드는 방법에 대해 포스팅하고자 합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-helloworldsh&quot;&gt;Create HelloWorld.sh&lt;/h2&gt;
+&lt;p&gt; 먼저 샘플 파일로 HellowWorld.sh 파일을 작성합니다. 내용은 아래와 같습니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hello World!&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;run-chmod-x-helloworldsh&quot;&gt;Run chmod +x HelloWorld.sh&lt;/h2&gt;
+&lt;p&gt;  chmod +x 커맨드를 실행해 스크립트 파일을 실행 가능하도록 만들면
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;./HelloWorld.sh&lt;/code&gt;를 통해 쉘 스크립트 파일을 실행할 수 있습니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; +x HelloWorld.sh
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./HelloWorld.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; Hellow World!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;전역적으로-쉘-스크립트-파일을-실행-시키기&quot;&gt;전역적으로 쉘 스크립트 파일을 실행 시키기&lt;/h2&gt;
+&lt;p&gt;  먼저 .sh 파일을 ~/.local/bin 경로로 옮긴 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cd ~/.local/bin&lt;/code&gt; 경로로 이동합니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.local/bin/&lt;/code&gt; 경로는 리눅스 사용자들에게 기본적으로 제공 되는 빈 폴더입니다. 일반적으로 운영체제 설치와 동시에 $PATH 변수에 추가 됩니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; ./HellowWorld.sh ~/.local/bin&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~/.local/bin/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;사실 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.sh&lt;/code&gt; 확장자는 해당 파일이 쉘 스크립트로 작성된 파일이라는 것을 명시해주는 역할만 할 뿐 파일의 실행 가능 여부에는 영향을 미치지 않습니다. 따라서 아래와 같은 트릭을 써보죠.&lt;br /&gt;
+&lt;strong&gt; #쉘 스크립트 파일을 ~/.local/bin/ 경로로 이동시킨다 하더라도&lt;/strong&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chmod +x filname&lt;/code&gt; &lt;strong&gt;커맨드는 반드시 최초 1회 실행해야합니다&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; ./HelloWorld.sh HelloWorld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;파일명으로-쉘-스크립트-파일을-실행시키기&quot;&gt;파일명으로 쉘 스크립트 파일을 실행시키기&lt;/h2&gt;
+&lt;p&gt;  이제 모든 경로에서 HelloWorld 파일을 실행 시킬 수 있습니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;HelloWorld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; Hello World!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;Documents
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;HelloWorld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; Hello World!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><summary type="html"> 오늘은 리눅스 터미널에서 .sh 파일을 실행가능하게 만드는 방법에 대해 포스팅하고자 합니다.</summary></entry><entry><title type="html">Github pages 다국어 기능 적용 가이드</title><link href="https://jerry901.github.io/2020/02/2020-02-06-01/" rel="alternate" type="text/html" title="Github pages 다국어 기능 적용 가이드" /><published>2020-02-06T00:00:00+09:00</published><updated>2020-02-06T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/02/01</id><content type="html" xml:base="https://jerry901.github.io/2020/02/2020-02-06-01/">&lt;p&gt; 이번 포스트에서는 &lt;strong&gt;Jekyll 플러그인을 이용해서 Github 블로그에 다국어를 적용하는 방법&lt;/strong&gt;에 대해 포스팅하고자 한다. 
+다국어 기능을 구현하기 위해서는 &lt;strong&gt;다국어 플러그인&lt;/strong&gt;을 사용하는 것이 수월한데, Github는 보안상의 이유로 몇몇 기본적인 플러그인 이외에 다른 플러그인들은 제공하지 않는다. 
+따라서 플러그인이 적용된 프로젝트를 업로드하면 프로젝트 빌드과정에서 &lt;strong&gt;오류&lt;/strong&gt;가 발생하게된다. 하지만 방법이 아예 없는 것은 아니다. 
+&lt;strong&gt;새로운 branch를 만들어 지킬 프로젝트를 push&lt;/strong&gt;하고 &lt;strong&gt;master branch에는 이미 빌드된 페이지를 push&lt;/strong&gt; 한다면 Guthub에서 제공하는 자체적 빌드과정을 거치지 않고 직접 publishing 할 수 있다. 
+Gtihub blog의 다국어 적용에 관한 정보는 상대적으로 부족한 편인데, 이 포스트를 통해 많은 사람들이 글로벌한 깃허브 블로그를 운영하는데 도움이 되었으면 한다.&lt;/p&gt;
+
+&lt;h2 id=&quot;jekyll-multiple-languages-플러그인-설치&quot;&gt;jekyll-multiple-languages 플러그인 설치&lt;/h2&gt;
+&lt;p&gt; jekyll-multiple-languages-plugin을 설치하는 방법에는 몇가지가 있는데, 각자 사용하는 테마에 따라 gem의 의존성과 관련된 이슈가 발생할 수 있기 때문에 나는 &lt;strong&gt;git submodule&lt;/strong&gt;을 이용한 방식을 선택했다.
+먼저 Jekyll project의 &lt;strong&gt;root directory&lt;/strong&gt;로 이동하여 다음과 같은 명령어를 실행한다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git submodule add git://github.com/screeninteraction/jekyll-multiple-languages-plugin.git _plugins/multiple-languages
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls &lt;/span&gt;_plugins/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;ls _plugins/&lt;/strong&gt; 명령어로 다음과 같은 결과가 나온다면 성공적으로 설치가 된 것이다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;multiple-languages
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;_configyml-설정&quot;&gt;_config.yml 설정&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;languages&lt;/strong&gt;에 제공하고자 하는 언어들을 입력한다. 첫번째 항목은 default language로 사용된다.&lt;/p&gt;
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;#languages&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;languages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;ko&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;en&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;디렉토리-구조&quot;&gt;디렉토리 구조&lt;/h2&gt;
+&lt;p&gt;Jekyll 프로젝트에서 우리는 포스트들을 project root 디렉토리의 _posts 폴더에 저장한다. 
+하지만 jekyll-multiple-languages-plugin 설치하면, 
+jekyl serve 명령은 &lt;strong&gt;_i18n 디렉토리 하위의 _posts 폴더&lt;/strong&gt;를 빌드한다. 
+따라서, 다음과 같은 디렉토리 구조가 필요하다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;project_root/
+&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; _i18n/
+&lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt; en/
+&lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt; _post/
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-01.md &lt;span class=&quot;c&quot;&gt;# your posts / .md&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-02.md
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-03.md
+         ...
+&lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt; ko/
+&lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt; _post/
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-01.md &lt;span class=&quot;c&quot;&gt;# your posts / .md&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-02.md
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-03.md
+         ...
+&lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt; en.yml
+&lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt; ko.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;lanugagesyml-설정&quot;&gt;lanugages.yml 설정&lt;/h2&gt;
+&lt;h3 id=&quot;enyml-example&quot;&gt;en.yml (example)&lt;/h3&gt;
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;global&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;english&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Eng&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;korean&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Kor&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;pages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Home&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;work&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Work&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;titles&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pagination&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Pagination&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;koyml-example&quot;&gt;ko.yml (example)&lt;/h3&gt;
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;global&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;english&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Eng&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;korean&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Kor&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;pages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Home&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;work&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Work&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;titles&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pagination&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Pagination&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;다국어-적용-페이지-접근하기&quot;&gt;다국어 적용 페이지 접근하기&lt;/h2&gt;
+&lt;h3 id=&quot;default-언어-한국어-예시&quot;&gt;default 언어 (한국어 예시)&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; https://blogurl.io/yyyy-mm-dd-01
+ https://localhost:4000/yyyy-mm-dd-01
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;다국어-페이지-영문-예시&quot;&gt;다국어 페이지 (영문 예시)&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; https://blogurl.io/en/yyyy-mm-dd-01
+ https://localhost:4000/en/yyyy-mm-dd-01
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;빌드된-소스-커밋하기&quot;&gt;빌드된 소스 커밋하기&lt;/h2&gt;
+&lt;h3 id=&quot;source-branch-생성-및-default-branch-설정&quot;&gt;source branch 생성 및 default branch 설정&lt;/h3&gt;
+&lt;p&gt;  Local repository에서 다음과 같은 명령어들을 실행한다. (git push -u 옵션은 이후 부터는 브랜치를 지정하지 않고 ```git push`` 명령만으로 커밋을 할 수 있도록 하는 옵션이다.)&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;master
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git push &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; origin &lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;그리고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Github web &amp;gt; your repository &amp;gt; Settings &amp;gt; Branches &amp;gt; Default branch&lt;/code&gt;
+로 이동해 &lt;strong&gt;source branch&lt;/strong&gt;를 &lt;strong&gt;default branch&lt;/strong&gt;로 변경해준다.&lt;/p&gt;
+
+&lt;h3 id=&quot;rakefile-작성&quot;&gt;Rakefile 작성&lt;/h3&gt;
+&lt;p&gt;  Jekyll project의 &lt;strong&gt;root directory&lt;/strong&gt;에서 &lt;strong&gt;Rakefile&lt;/strong&gt;을 열고, 다음과 같은 내용을 입력한다. (Rakefile이 없다면 새로 만든다.)&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Auto publish&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Change your GitHub reponame&lt;/span&gt;
+GITHUB_REPONAME &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;username/username.github.io&quot;&lt;/span&gt;
+
+desc &lt;span class=&quot;s2&quot;&gt;&quot;Generate blog files&quot;&lt;/span&gt;
+task :generate &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;Jekyll::Site.new&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Jekyll.configuration&lt;span class=&quot;o&quot;&gt;({&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;source&quot;&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;.&quot;&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;destination&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;_site&quot;&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}))&lt;/span&gt;.process
+end
+
+desc &lt;span class=&quot;s2&quot;&gt;&quot;Generate and publish blog to gh-pages&quot;&lt;/span&gt;
+task :publish &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;:generate] &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;Dir.mktmpdir &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; |tmp|
+    cp_r &lt;span class=&quot;s2&quot;&gt;&quot;_site/.&quot;&lt;/span&gt;, tmp
+
+    &lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Dir.pwd
+    Dir.chdir tmp
+
+    system &lt;span class=&quot;s2&quot;&gt;&quot;git init&quot;&lt;/span&gt;
+    system &lt;span class=&quot;s2&quot;&gt;&quot;git add .&quot;&lt;/span&gt;
+	message &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Site updated at #{Time.now.utc}&quot;&lt;/span&gt;
+	system &lt;span class=&quot;s2&quot;&gt;&quot;git commit -m #{message.inspect}&quot;&lt;/span&gt;
+    system &lt;span class=&quot;s2&quot;&gt;&quot;git remote add origin https://github.com/#{GITHUB_REPONAME}.git&quot;&lt;/span&gt;
+    system &lt;span class=&quot;s2&quot;&gt;&quot;git push origin master --force&quot;&lt;/span&gt;
+
+    Dir.chdir &lt;span class=&quot;nb&quot;&gt;pwd
+  &lt;/span&gt;end
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;run-rake-publish&quot;&gt;Run rake publish&lt;/h3&gt;
+&lt;p&gt;  이제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rake publish&lt;/code&gt; 또는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle exec rake publish&lt;/code&gt; 커맨드를 입력하면 master branch에 정적 사이트들이 업로드 될 것이며, git push를 하면 source branch에 지킬 프로젝트가 업로드 될 것이다.&lt;/p&gt;
+
+&lt;h3 id=&quot;언어-선택-버튼-만들기&quot;&gt;언어 선택 버튼 만들기&lt;/h3&gt;
+&lt;p&gt;  다국어 적용이 되었으면 언어 선택 버튼도 필요할 것이다.. 이 블로그의 언어 선택 버튼 소스를 공유한다. 아래 내용을 masthead.html 파일의 &amp;lt;nav&amp;gt; 태그 아래에 추가하였다. (css는 취향에 맞게..)&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;nav&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;lang-sel&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;ul&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;lang&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+        {% capture link1 %}{{ site.baseurl_root }}{{ page.url}}{% endcapture %}
+        {% capture link2 %}{{ site.baseurl_root }}/en{{ page.url}}{% endcapture %}
+        {% if site.lang == &quot;ko&quot; %}
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;masthead_menu-item visible-links&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+	        &lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{{ link1 }}&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;enabled&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;{% t global.korean%} &lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;|&lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{{ link2 }}&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt; {% t global.english%}&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+        {% elsif site.lang == &quot;en&quot; %}
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;masthead_menu-item lang&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+	        &lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{{ link1 }}&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;{% t global.korean%} &lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;|&lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{{ link2 }}&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;enabled&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt; {% t global.english%}&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+        {% endif %}
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;&amp;lt;/nav&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;마치며&quot;&gt;마치며..&lt;/h2&gt;
+&lt;p&gt;다국어를 적용하는데 꽤나 많은 시간을 허비했다. 또다른 누군가는 이 포스트를 보고 조금이나마 시간을 아낄 수 있기를..&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Jekyll" /><summary type="html"> 이번 포스트에서는 Jekyll 플러그인을 이용해서 Github 블로그에 다국어를 적용하는 방법에 대해 포스팅하고자 한다. 다국어 기능을 구현하기 위해서는 다국어 플러그인을 사용하는 것이 수월한데, Github는 보안상의 이유로 몇몇 기본적인 플러그인 이외에 다른 플러그인들은 제공하지 않는다. 따라서 플러그인이 적용된 프로젝트를 업로드하면 프로젝트 빌드과정에서 오류가 발생하게된다. 하지만 방법이 아예 없는 것은 아니다. 새로운 branch를 만들어 지킬 프로젝트를 push하고 master branch에는 이미 빌드된 페이지를 push 한다면 Guthub에서 제공하는 자체적 빌드과정을 거치지 않고 직접 publishing 할 수 있다. Gtihub blog의 다국어 적용에 관한 정보는 상대적으로 부족한 편인데, 이 포스트를 통해 많은 사람들이 글로벌한 깃허브 블로그를 운영하는데 도움이 되었으면 한다.</summary></entry><entry><title type="html">Vim editor 설정</title><link href="https://jerry901.github.io/2020/01/2020-01-27-01/" rel="alternate" type="text/html" title="Vim editor 설정" /><published>2020-01-27T00:00:00+09:00</published><updated>2020-01-27T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/01/01</id><content type="html" xml:base="https://jerry901.github.io/2020/01/2020-01-27-01/">&lt;p&gt; 현재 제가 사용하고있는 vim editor의 설정을 공유합니다. 다음 내용을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.vimrc&lt;/code&gt; 파일에 붙여넣으면 설정 내용들이 동작합니다. 
+만약 .vimrc 파일이 존재하지 않는다면 다음 명령어를 실행해주세요.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;touch&lt;/span&gt; ~/.vimrc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;script async=&quot;&quot; src=&quot;https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;ins class=&quot;adsbygoogle&quot; style=&quot;display:block; text-align:center;&quot; data-ad-layout=&quot;in-article&quot; data-ad-format=&quot;fluid&quot; data-ad-client=&quot;ca-pub-4764055672560525&quot; data-ad-slot=&quot;1747815845&quot;&gt;&lt;/ins&gt;
+&lt;script&gt;
+     (adsbygoogle = window.adsbygoogle || []).push({});
+&lt;/script&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-vi-vimrc&quot;&gt;$ vi ~/.vimrc&lt;/h2&gt;
+&lt;div class=&quot;language-viml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;&quot; 구문강조 사용&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;syntax&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nocompatible&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; 검색어 하이라이팅 &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hlsearch&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 줄번호 &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;nu&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 자동 들여쓰기&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;autoindent&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;scrolloff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;wildmode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;longest&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;list&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; tag select &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; st select &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 스크롤바 너비&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 다른 파일로 넘어갈 때 자동 저장&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;autowrite&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 작업 중인 파일 외부에서 변경됬을 경우 자동으로 불러옴&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;autoread&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; C언어 style 자동 들여쓰기&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cindent&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;history&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;100&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; 상태바 표시 항상&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;laststatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 들여쓰기 너비 설정&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;shiftwidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;smarttab&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;smartindent&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;softtabstop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;tabstop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; 현재 커서 위치 표시&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;ruler&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;statusline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;\ %&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;v&lt;/span&gt;\ &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;%P&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;%&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;a&lt;/span&gt;\ %&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;m&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;r&lt;/span&gt;\ %F\
+
+&lt;span class=&quot;c&quot;&gt;&quot; 파일저장인코딩 &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;fileencoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;utf&lt;span class=&quot;m&quot;&gt;-8&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 줄의 끝, 시작, 들여쓰기에서 백스페이스시 이전줄로&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;backspace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;eol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;start&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;indent&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 키워드 입력시 점진적 검색&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;incsearch&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 검색시 대소문자 무시, set ic 도 가능&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;ignorecase&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; 터미널 인코딩&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;tenc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;utf&lt;span class=&quot;m&quot;&gt;-8&lt;/span&gt;      
+
+&lt;span class=&quot;c&quot;&gt;&quot; 한글 파일은 euc-kr로, 유니코드는 유니코드로&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;fencs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;ucs&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;bom&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;utf&lt;span class=&quot;m&quot;&gt;-8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;euc&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;kr&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;latin1 
+
+&lt;span class=&quot;c&quot;&gt;&quot;Key mappings Leader key 설정&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; mapleader&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;,&quot;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; 마우스 사용 여부&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;&quot; on&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;F7&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;ESC&lt;span class=&quot;p&quot;&gt;&amp;gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;mouse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;CR&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;&quot; off&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;F8&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;ESC&lt;span class=&quot;p&quot;&gt;&amp;gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;mouse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;-=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;CR&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; moving&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;&quot; insert mode&lt;/span&gt;
+inoremap jk &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;esc&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; normal mode&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; $
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; ^
+nnoremap &lt;span class=&quot;k&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;d&lt;/span&gt;$
+nnoremap &lt;span class=&quot;k&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;d&lt;/span&gt;^
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;Tab&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;Tab&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;C&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;--&amp;lt;&lt;/span&gt;CR&lt;span class=&quot;p&quot;&gt;&amp;gt;==&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;C&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;CR&lt;span class=&quot;p&quot;&gt;&amp;gt;==&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;k&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot;실수로 help 열지 않기 위한 맵핑&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;leader&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; visual mode&lt;/span&gt;
+vnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; $
+vnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; ^
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><summary type="html"> 현재 제가 사용하고있는 vim editor의 설정을 공유합니다. 다음 내용을 ~/.vimrc 파일에 붙여넣으면 설정 내용들이 동작합니다. 만약 .vimrc 파일이 존재하지 않는다면 다음 명령어를 실행해주세요. $ touch ~/.vimrc</summary></entry><entry><title type="html">Jekyll Github 블로그 생성</title><link href="https://jerry901.github.io/2020/01/2020-01-27-02/" rel="alternate" type="text/html" title="Jekyll Github 블로그 생성" /><published>2020-01-27T00:00:00+09:00</published><updated>2020-01-27T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/01/02</id><content type="html" xml:base="https://jerry901.github.io/2020/01/2020-01-27-02/">&lt;p&gt;  오늘은 이전 포스트 &lt;strong&gt;&lt;a href=&quot;https://jerry901.github.io/2020/01/2020-01-26-02/&quot;&gt;우분투 18.04 LTS 환경에서 Jekyll 설치&lt;/a&gt;&lt;/strong&gt;에 이어, Jekyll을 활용하여 Github 블로그를 생성하는 방법에 대해 알아보겠습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;github-repository-생성&quot;&gt;Github Repository 생성&lt;/h2&gt;
+&lt;p&gt; 먼저 Github 블로그의 테마, 포스트 등을 업로드할 &lt;strong&gt;&lt;a href=&quot;http://www.github.com/new&quot;&gt;저장소를 생성&lt;/a&gt;&lt;/strong&gt;합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Repository name&lt;/code&gt;은 블로그의 &lt;strong&gt;도메인&lt;/strong&gt;으로 사용될 것이므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;userName.github.io&lt;/code&gt;의 포맷으로 입력해주세요.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-01-27/2020-01-27_create_a_new_repo.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;테마-선택&quot;&gt;테마 선택&lt;/h2&gt;
+&lt;p&gt;  블로그의 테마를 다운받을 차례입니다. &lt;strong&gt;&lt;a href=&quot;http://jekyllthemes.org&quot;&gt;Jekyll Themes&lt;/a&gt;&lt;/strong&gt;에서 마음에 드는 테마를 다운받아주세요. 본 포스트에서는 이 블로그의 테마인 &lt;strong&gt;&lt;a href=&quot;https://github.com/mmistakes/minimal-mistakes&quot;&gt;Minimal Mistakes&lt;/a&gt;&lt;/strong&gt;로 진행하겠습니다. 
+만약 다른 테마를 선택하셨다면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ git clone&lt;/code&gt; 명령어의 URL 파라미터를 해당 테마의 URL로 변경해주세요.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone https://github.com/mmistakes/minimal-mistakes.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;프로젝트-빌드&quot;&gt;프로젝트 빌드&lt;/h2&gt;
+&lt;p&gt; 프로젝트 경로로 이동해 다음 명령어들을 실행합니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;minimal-mistakes
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;bundle &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;빌드가 성공적으로 진행되면 아래와 같은 내용을 볼 수 있습니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Configuration file: /home/userName/minimal-mistakes/_config.yml
+            Source: /home/userName/minimal-mistakes
+       Destination: /home/userName/minimal-mistakes/_site
+ Incremental build: disabled. Enable with &lt;span class=&quot;nt&quot;&gt;--incremental&lt;/span&gt;
+      Generating... 
+       Jekyll Feed: Generating feed &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;posts
+                    &lt;span class=&quot;k&quot;&gt;done in &lt;/span&gt;0.199 seconds.
+ Auto-regeneration: enabled &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/home/userName/minimal-mistakes'&lt;/span&gt;
+    Server address: http://127.0.0.1:4000
+  Server running... press ctrl-c to stop.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;이제 브라우저를 켜고 &lt;strong&gt;&lt;a href=&quot;http://127.0.0.1:4000/&quot;&gt;http://127.0.0.1:4000/&lt;/a&gt;&lt;/strong&gt; 또는 &lt;strong&gt;&lt;a href=&quot;http://localhost:4000/&quot;&gt;http://localhost:4000/&lt;/a&gt;&lt;/strong&gt;로 연결하면 테마가 적용된 블로그를 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;원격-저장소에-업로드&quot;&gt;원격 저장소에 업로드&lt;/h2&gt;
+&lt;p&gt;  처음에 만들었던 원격 저장소를 내려받고, 로컬 저장소에 minimal-mistakes를 복사한 후 커밋하면 정적 github 블로그가 생성됩니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone 저장소_URL
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; minimal-mistakes/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; 로컬_저장소_폴더명
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;로컬_저장소_폴더명
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git add &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;hello my blog&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git push origin master 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;몇 분 후 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://userName.github.io&lt;/code&gt;에서 블로그가 생성된 것을 확인 할 수 있습니다.&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Jekyll" /><summary type="html">  오늘은 이전 포스트 우분투 18.04 LTS 환경에서 Jekyll 설치에 이어, Jekyll을 활용하여 Github 블로그를 생성하는 방법에 대해 알아보겠습니다.</summary></entry><entry><title type="html">우분투 18.04 LTS 환경에서 Jekyll 설치</title><link href="https://jerry901.github.io/2020/01/2020-01-26-02/" rel="alternate" type="text/html" title="우분투 18.04 LTS 환경에서 Jekyll 설치" /><published>2020-01-26T00:00:00+09:00</published><updated>2020-01-26T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/01/02</id><content type="html" xml:base="https://jerry901.github.io/2020/01/2020-01-26-02/">&lt;p&gt; 오래전부터 기술 블로그를 개설하기위한 시도를 해왔지만 매번 작업 환경을 구성하는 단계에서 포기했습니다.
+많은 시간을 투자한 끝에 Github pages와 호환되는 &lt;strong&gt;Jekyll plugin&lt;/strong&gt;을 이용해 블로그를 빌드하는데 성공했고, 
+오늘은 &lt;strong&gt;우분투 18.04 LTS&lt;/strong&gt; 환경에서 &lt;strong&gt;Jekyll&lt;/strong&gt;을 설치하는 방법과 이를 이용해 정적 페이지 프로젝트를 생성하는 법에 대해 포스팅하고자 합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;작업-환경설정&quot;&gt;작업 환경설정&lt;/h2&gt;
+&lt;p&gt; Jekyll은 Ruby로 개발되었습니다. 따라서 설치를 위해 먼저 Ruby를 설치합니다. Ruby로 작성된 소프트웨어들은 적용되는 버젼이 각각 다르기 때문에 패키지 관리자를 통해 단일 버젼만을 설치하게되면 추후 &lt;strong&gt;의존성 문제&lt;/strong&gt;를 겪게 될 수 있습니다. 따라서 이 포스트에서는 &lt;strong&gt;rbenv&lt;/strong&gt;을 이용해 Ruby를 설치합니다. 이렇게 하면 필요에 따라 다른 버젼의 Ruby를 선택하여 사용할 수 있습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;--패키지-리스트-업데이트-및-의존-라이브러리-설치&quot;&gt; - 패키지 리스트 업데이트 및 의존 라이브러리 설치&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get update
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev software-properties-common libffi-dev nodejs
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--rbenv-설치&quot;&gt; - rbenv 설치&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--rbenv-환경변수-설정&quot;&gt; - rbenv 환경변수 설정&lt;/h3&gt;
+&lt;p&gt; 아래 명령어들을 실행하면 해당 내용이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.bashrc&lt;/code&gt; 파일에 추가된 것을 확인할 수 있습니다. 
+zsh shell을 사용하는 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.zshrc&lt;/code&gt; 파일을 확인하시기 바랍니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'export PATH=&quot;$HOME/.rbenv/bin:$PATH&quot;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; ~/.bashrc
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'eval &quot;$(rbenv init -)&quot;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; ~/.bashrc
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SHELL&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--ruby-build-설치&quot;&gt; - ruby-build 설치&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'export PATH=&quot;$HOME/.rbenv/plugins/ruby-build/bin:$PATH&quot;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; ~/.bashrc
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SHELL&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--rbenv-해시-재정렬&quot;&gt; - rbenv 해시 재정렬&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rbenv rehash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--ruby-설치&quot;&gt; - Ruby 설치&lt;/h3&gt;
+&lt;p&gt; 2.6.3 버젼을 사용하며 큰 문제없이 잘 사용 중이므로 2.6.3 버젼을 선택했지만 버젼 선택은 개인의 환경에 맞게 설정합니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rbenv &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;2.6.3 
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rbenv global 2.6.3 
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rbenv rehash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--지킬-설치&quot;&gt; - 지킬 설치&lt;/h3&gt;
+&lt;p&gt; rbenv를 이용해 Ruby를 설치하게되면 gem이 함께 설치됩니다. gem은 apt와 같은 패키지 관리자 역할을 수행합니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gem &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;jekyll
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;--bundler-설치&quot;&gt; - bundler 설치&lt;/h3&gt;
+&lt;p&gt; 설치된 gem이 또 다른 gem을 의존하는 경우, Gemfile이라는 파일에 의존성들을 기술하여 bundle install이라는 명령어를 통해 일괄적으로 설치할 수 있습니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gem &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;bundler
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;jekyll-시작&quot;&gt;Jekyll 시작&lt;/h2&gt;
+
+&lt;h3 id=&quot;--새-프로젝트-생성&quot;&gt; - 새 프로젝트 생성&lt;/h3&gt;
+&lt;p&gt; 프로젝트를 생성하고 해당 경로로 이동해 jekyll serve 명령어를 실행하면 로컬에서 블로그 화면을 볼 수 있습니다. 
+ 깃허브 블로그를 생성할 목적이라면 프로젝트명을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;githubId.github.io&lt;/code&gt;의 형식으로 하는것이 일반적입니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;Jekyll new project_name  
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;project_name
+ ~/project_name &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--bundler-활용-예&quot;&gt; - bundler 활용 예&lt;/h3&gt;
+&lt;p&gt;프로젝트 폴더로 이동해 Gemfile을 열어줍니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~/project_name 
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;vi Gemfile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;맨 아랫줄에 다음과 같은 의존성을 기록합니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; gem &lt;span class=&quot;s1&quot;&gt;'jekyll-admin'&lt;/span&gt;, group: :jekyll_plugins
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;기록된 의존성에 따른 플러그인들을 설치하고 jekyll serve 명령을 실행합니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;bundle &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~/project_name
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;jekyll serve 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;http://localhost:4000/admin/ 로 연결하면, admin 페이지를 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;p&gt;  - &lt;a href=&quot;https://stackoverflow.com/questions/9394338/how-do-rvm-and-rbenv-actually-work&quot;&gt;Stack overflow - How do RVM and rbenv actually work?&lt;/a&gt;&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Jekyll" /><summary type="html"> 오래전부터 기술 블로그를 개설하기위한 시도를 해왔지만 매번 작업 환경을 구성하는 단계에서 포기했습니다. 많은 시간을 투자한 끝에 Github pages와 호환되는 Jekyll plugin을 이용해 블로그를 빌드하는데 성공했고, 오늘은 우분투 18.04 LTS 환경에서 Jekyll을 설치하는 방법과 이를 이용해 정적 페이지 프로젝트를 생성하는 법에 대해 포스팅하고자 합니다.</summary></entry><entry><title type="html">안녕하세요</title><link href="https://jerry901.github.io/2020/01/2020-01-26-01/" rel="alternate" type="text/html" title="안녕하세요" /><published>2020-01-26T00:00:00+09:00</published><updated>2020-01-26T00:00:00+09:00</updated><id>https://jerry901.github.io/2020/01/01</id><content type="html" xml:base="https://jerry901.github.io/2020/01/2020-01-26-01/">&lt;p&gt;새 블로그 입니다.&lt;/p&gt;
+
+&lt;p&gt;2020-01-26 12:47:03 +0900&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Jekyll" /><category term="Update" /><summary type="html">새 블로그 입니다.</summary></entry></feed>

@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://jerry901.github.io/en/feed.xml" rel="self" type="application/atom+xml" /><link href="https://jerry901.github.io/en/" rel="alternate" type="text/html" hreflang="en" /><updated>2021-03-11T00:40:42+09:00</updated><id>https://jerry901.github.io/en/feed.xml</id><title type="html">Blog dev.Hoo</title><subtitle>Web / Linux / Java / C</subtitle><author><name>Kwanghoo Park</name></author><entry><title type="html">Simple guide for the template engine PUG</title><link href="https://jerry901.github.io/en/2020/03/2020-03-06-01/" rel="alternate" type="text/html" title="Simple guide for the template engine PUG" /><published>2020-03-06T00:00:00+09:00</published><updated>2020-03-06T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/03/01</id><content type="html" xml:base="https://jerry901.github.io/en/2020/03/2020-03-06-01/">&lt;p&gt;  Today, we are gonna take a quick look at Installing and a simple usage of the Node.js template engine called &lt;strong&gt;&lt;em&gt;Pug&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;template-engine-&quot;&gt;Template Engine ?&lt;/h1&gt;
+&lt;p&gt;  Template engine is used to generate HTML pages with vairables in them. For example, in case of user information page, every user wll see the same template but gets different information depending on the user who has requested the page. In this case, it’s better to have one specific HTML template and fiil the data which is selected with user ID.&lt;/p&gt;
+
+&lt;h1 id=&quot;install-pug&quot;&gt;Install PUG&lt;/h1&gt;
+&lt;p&gt;  Move to the root directory of the npm project, and update the core-js.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm update core-js 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Install Pug, and create a directory named &lt;strong&gt;&lt;em&gt;views&lt;/em&gt;&lt;/strong&gt;. If you use &lt;strong&gt;&lt;em&gt;–save&lt;/em&gt;&lt;/strong&gt; option, you will get Pub in your package.json file as one of the dependencies.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;pug &lt;span class=&quot;nt&quot;&gt;--save&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;views
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;create-temppug&quot;&gt;Create temp.pug&lt;/h1&gt;
+&lt;p&gt;  Move to &lt;strong&gt;&lt;em&gt;Views&lt;/em&gt;&lt;/strong&gt; and create &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;temp.pug&lt;/code&gt;. In &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.pug&lt;/code&gt; files, The html hierarchy is expressed with &lt;strong&gt;&lt;em&gt;indent&lt;/em&gt;&lt;/strong&gt; of each line, and the template engine translate code like below to HTML tags. Also, we can do some logic in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.pug&lt;/code&gt; files, but we need to make sure that we mean to use logic by adding &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dash( - )&lt;/code&gt;` at the beginning of the line since it uses ‘=’ operator to print data which is given by Controller.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;html
+    head
+        title= _title
+    body
+        h1 hello Pug!
+        ul
+            - for(var i=0; i&amp;lt;5; i++)
+                li coding
+        div= time
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;wirte-code-in-appjs-file&quot;&gt;Wirte code in app.js file&lt;/h1&gt;
+&lt;p&gt;  Write app.js file or create it like below. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;res.render()&lt;/code&gt; method accepts the parameter formatted in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Key : Value&lt;/code&gt; which is its second parameter, and theses can be used as variables in temp.pug file. This is the biggest reason why we use template engine.&lt;/p&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pretty&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// beatify the html code made with template engine&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// set the directory where your template files exist&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;view engine&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;pug&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// set which template engine to use&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/template&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// routing the request&lt;/span&gt;
+     &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;_title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;PUG&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Example app listening on port 3000!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;check-the-result&quot;&gt;Check the result&lt;/h1&gt;
+&lt;p&gt; After running the server with command &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ node app.js&lt;/code&gt;, go to http://localhost:3000/template (local server) or http://AWS_PUBLIC_DNS:3000/template:3000 (AWS) to check the result.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-01.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+Perfect? Yeah.&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><category term="Node.js" /><summary type="html">  Today, we are gonna take a quick look at Installing and a simple usage of the Node.js template engine called Pug</summary></entry><entry><title type="html">How to perform GET and POST requests on node.js applications</title><link href="https://jerry901.github.io/en/2020/03/2020-03-06-02/" rel="alternate" type="text/html" title="How to perform GET and POST requests on node.js applications" /><published>2020-03-06T00:00:00+09:00</published><updated>2020-03-06T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/03/02</id><content type="html" xml:base="https://jerry901.github.io/en/2020/03/2020-03-06-02/">&lt;p&gt;  In my previous post, we took a look at a Node.js Template engine &lt;strong&gt;Pug&lt;/strong&gt;. Today, I’m going to post about processing data requested by GET, POST Methods.
+    - &lt;a href=&quot;https://jerry901.github.io/2020/03/2020-03-06-01/&quot;&gt;[Node.js] Simple guide for the template engine PUG&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;performing-get-request&quot;&gt;Performing GET Request&lt;/h1&gt;
+
+&lt;h2 id=&quot;create-form_getpug&quot;&gt;Create form_get.pug&lt;/h2&gt;
+&lt;p&gt;  First of all, we are going to create a template which consists of Input box, Text area, and Submit button. This page will send ‘/get_receicer’ request when the submit button is pressed. Create a file named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form_get.pug&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;doctype html
+html
+    head
+        meta(charset='utf-8')
+    body
+        form(action='/get_receiver' method='GET')
+            p
+                input(type='text' name='title')
+            p
+                textarea(name='description')
+            p
+                input(type='submit')
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;create-getjs&quot;&gt;Create get.js&lt;/h2&gt;
+&lt;p&gt;  The data which has been given to server by GET Method is in ‘query’ which is a property of Request object. To process the data, create your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get.js&lt;/code&gt; file like below.&lt;/p&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pretty&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;view engine&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;pug&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/form_get&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt; 
+        &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;form_get&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/get_receiver&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt; 
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;, &lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Example app listening on port 3000!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;check-the-result&quot;&gt;Check the result&lt;/h1&gt;
+&lt;p&gt;  Run server by executing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get.js&lt;/code&gt; command .&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;node get.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-02-get-req.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+Go to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form page&lt;/code&gt; by requesting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://base_url/form_get&lt;/code&gt; on your browser, Fill the form, and then press the submit button.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-02-get-res.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+We can see the data we sent just sent has been processed sucessfully, and come back!&lt;/p&gt;
+
+&lt;h1 id=&quot;performing-post-request&quot;&gt;Performing POST Request&lt;/h1&gt;
+
+&lt;h2 id=&quot;create-form_getpug-1&quot;&gt;Create form_get.pug&lt;/h2&gt;
+&lt;p&gt;  Create &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form_post.pug&lt;/code&gt; like below . It is mostly the same as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form_get.pug&lt;/code&gt; file, but the action of form tag has been chaged to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Post Method&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;doctype html
+html
+    head
+        meta(charset='utf-8')
+    body
+        form(action='/post_receiver' method='POST')
+            p
+                input(type='text' name='title')
+            p
+                textarea(name='description')
+            p
+                input(type='submit')
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;install-body-parser&quot;&gt;Install body-parser&lt;/h2&gt;
+&lt;p&gt;  To process the data from Post Method, we need to you the property  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;body&lt;/code&gt; in the request object. However, Body property is set to the undefined by default, So we need to get a module that let us able to use the property called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;body-parser&lt;/code&gt;. Lets install the moudlue with a command below.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;body-parser
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;create-postjs&quot;&gt;Create post.js&lt;/h2&gt;
+&lt;p&gt;  Add a code that allow &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app object&lt;/code&gt; to be able to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;body-parser module&lt;/code&gt;, and we are going to use app.post() Method instead of app.get() method.&lt;/p&gt;
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bodyParser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;body-parser&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;locals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;pretty&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;./views&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;view engine&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;pug&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;use&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;bodyParser&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;urlencoded&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;extended&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}));&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/form_post&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;form_post&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/post_receiver&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;, &lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Example app listening on port 3000!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;check-the-result-1&quot;&gt;Check the result&lt;/h1&gt;
+&lt;p&gt;  먼저 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;post.js&lt;/code&gt;를 실행합니다.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;node post.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-02-post-req.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+Go to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form page&lt;/code&gt; by requesting &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://base_url/form_post&lt;/code&gt; on your browser, Fill the form, and then press the submit button.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-06-02-post-res.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;br /&gt;
+We can see the data we sent just sent has been processed sucessfully, and come back!&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><category term="Node.js" /><summary type="html">  In my previous post, we took a look at a Node.js Template engine Pug. Today, I’m going to post about processing data requested by GET, POST Methods.     - [Node.js] Simple guide for the template engine PUG</summary></entry><entry><title type="html">Making a node.js application on AWS Server</title><link href="https://jerry901.github.io/en/2020/03/2020-03-04-01/" rel="alternate" type="text/html" title="Making a node.js application on AWS Server" /><published>2020-03-04T00:00:00+09:00</published><updated>2020-03-04T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/03/01</id><content type="html" xml:base="https://jerry901.github.io/en/2020/03/2020-03-04-01/">&lt;p&gt;  &lt;strong&gt;&lt;em&gt;AWS&lt;/em&gt;&lt;/strong&gt; has been the most popular web service for years, and most of the companies that you might want to give your resume to would probably require your abilities of some AWS services. Therefore, there is no wonder that you must know how to use AWS or how it works if you want to get a job as a Web developer. Today, I’m going to post about how to make a basic node.js application on AWS.&lt;/p&gt;
+
+&lt;h4 id=&quot;references&quot;&gt;References&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html&quot;&gt;Tutorial: Setting Up Node.js on an Amazon EC2 Instance&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;create-a-project&quot;&gt;Create a Project&lt;/h1&gt;
+
+&lt;p&gt;  First of all, make a directory to save your source file, and go to the directory.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;node&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ./node
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;For the next, Initialize current directory as a &lt;strong&gt;&lt;em&gt;npm project&lt;/em&gt;&lt;/strong&gt;. There will be some break point asking you to write some informations of this project but those are not important at all. Just keep hitting &lt;strong&gt;&lt;em&gt;Enter&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm init
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Install &lt;strong&gt;&lt;em&gt;express.js&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;npm &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--save&lt;/span&gt; express
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;write-examplejs-file&quot;&gt;Write example.js file&lt;/h1&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; vi example.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This code below is a sample code which is on the &lt;strong&gt;&lt;em&gt;official Web site&lt;/em&gt;&lt;/strong&gt; of Express.js&lt;/p&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Hello World!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+
+&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Example app listening on port 3000!&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;add-a-inbound-rule-to-the-ec2-security-group&quot;&gt;Add a Inbound Rule to the EC2 Security Group&lt;/h1&gt;
+&lt;p&gt;  On the AWS Web, move to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS Home &amp;gt; EC2 &amp;gt; NETWORK &amp;amp; SECURITY &amp;gt; Security Groups&lt;/code&gt;, click “Edit” button in “Inboud” tab, and add a &lt;strong&gt;&lt;em&gt;Custom TCP Rule&lt;/em&gt;&lt;/strong&gt; (port: 3000).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-03-04/2020-03-04-01-en.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;run-examplejs&quot;&gt;Run example.js&lt;/h1&gt;
+&lt;p&gt;  Lets go back to the AWS Terminal, and run example.js&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;node example.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;check-the-result&quot;&gt;Check the result&lt;/h1&gt;
+&lt;p&gt;  When you request http://AWS_public_DNS:3000 on your browser, you would be able to see the Hello world! as a result. &lt;strong&gt;&lt;em&gt;Public DNS&lt;/em&gt;&lt;/strong&gt;is an address that you can see on the list of your AWS instances which is exactly like &lt;strong&gt;&lt;em&gt;ec1-23-456-789-000.ap-northeast-0.compute.amazonaws.com&lt;/em&gt;&lt;/strong&gt;.&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><category term="AWS" /><category term="Node.js" /><summary type="html">  AWS has been the most popular web service for years, and most of the companies that you might want to give your resume to would probably require your abilities of some AWS services. Therefore, there is no wonder that you must know how to use AWS or how it works if you want to get a job as a Web developer. Today, I’m going to post about how to make a basic node.js application on AWS. References Tutorial: Setting Up Node.js on an Amazon EC2 Instance Create a Project   First of all, make a directory to save your source file, and go to the directory. $ mkdir node; cd ./node For the next, Initialize current directory as a npm project. There will be some break point asking you to write some informations of this project but those are not important at all. Just keep hitting Enter. $ npm init Install express.js $ npm install --save express Write example.js file vi example.js This code below is a sample code which is on the official Web site of Express.js var express = require('express'); var app = express(); app.get('/', function (req, res) { res.send('Hello World!'); }); app.listen(3000, function () { console.log('Example app listening on port 3000!'); }); Add a Inbound Rule to the EC2 Security Group   On the AWS Web, move to AWS Home &amp;gt; EC2 &amp;gt; NETWORK &amp;amp; SECURITY &amp;gt; Security Groups, click “Edit” button in “Inboud” tab, and add a Custom TCP Rule (port: 3000). Run example.js   Lets go back to the AWS Terminal, and run example.js $ node example.js Check the result   When you request http://AWS_public_DNS:3000 on your browser, you would be able to see the Hello world! as a result. Public DNSis an address that you can see on the list of your AWS instances which is exactly like ec1-23-456-789-000.ap-northeast-0.compute.amazonaws.com.</summary></entry><entry><title type="html">HackerRank Solution : Minimum Swap 2</title><link href="https://jerry901.github.io/en/2020/02/2020-02-21-01/" rel="alternate" type="text/html" title="HackerRank Solution : Minimum Swap 2" /><published>2020-02-21T00:00:00+09:00</published><updated>2020-02-21T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/02/01</id><content type="html" xml:base="https://jerry901.github.io/en/2020/02/2020-02-21-01/">&lt;h1 id=&quot;solution&quot;&gt;Solution&lt;/h1&gt;
+&lt;p&gt;The basic idea is this : Any of arr[i] means the index where it actually have to go to because all of the cases are consecutive, 
+from ‘1’ to ‘n’. There are no cases like “{1, 2, 4, 8, 9}” as a simple example. 
+What i did was to keep swapping the elements arr[i] and arr[arr[i]-1] till the element of arr[i] becomes i+1 for every loop; 
+arr[0] should become ‘1’, arr[1] should become ‘2’, arr[3] = ‘3’ and so on. 
+This worked very well and i think it’s simple. i’m sharing my code just in case for someone it could be a little help. Happy practicing.&lt;/p&gt;
+
+&lt;h1 id=&quot;example-case&quot;&gt;Example case&lt;/h1&gt;
+&lt;p&gt;{5, 3, 1, 2, 6, 4} swap(0, 4) cuz number 5 must be at the index &lt;strong&gt;4&lt;/strong&gt; which is &lt;strong&gt;5th index&lt;/strong&gt; of its array&lt;/p&gt;
+
+&lt;p&gt;{6, 3, 1, 2, &lt;strong&gt;5&lt;/strong&gt;, 4} swap(0, 5)&lt;/p&gt;
+
+&lt;p&gt;{4, 3, 1, 2, &lt;strong&gt;5&lt;/strong&gt;, &lt;strong&gt;6&lt;/strong&gt;} swap(0, 3)&lt;/p&gt;
+
+&lt;p&gt;{2, 3, 1, &lt;strong&gt;4&lt;/strong&gt;, &lt;strong&gt;5&lt;/strong&gt;, &lt;strong&gt;6&lt;/strong&gt;} swap(0, 1)&lt;/p&gt;
+
+&lt;p&gt;{3, &lt;strong&gt;2&lt;/strong&gt;, 1, &lt;strong&gt;4&lt;/strong&gt;, &lt;strong&gt;5&lt;/strong&gt;, &lt;strong&gt;6&lt;/strong&gt;} swap(0, 2)&lt;/p&gt;
+
+&lt;p&gt;{&lt;strong&gt;1&lt;/strong&gt;, &lt;strong&gt;2&lt;/strong&gt;, &lt;strong&gt;3&lt;/strong&gt;, &lt;strong&gt;4&lt;/strong&gt;, &lt;strong&gt;5&lt;/strong&gt;, &lt;strong&gt;6&lt;/strong&gt;}&lt;/p&gt;
+
+&lt;p&gt;In this case, we can get the array fully sorted only at index ‘0’&lt;/p&gt;
+
+&lt;h1 id=&quot;source&quot;&gt;Source&lt;/h1&gt;
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Written in c++&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_of_swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Changed arr to global variable&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;curIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;temp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+		
+    &lt;span class=&quot;n&quot;&gt;num_of_swap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Complete the minimumSwaps function below.&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;minimumSwaps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+		
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num_of_swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Kwanghoo Park</name></author><category term="HackerRank" /><category term="Algorithms" /><summary type="html">Solution The basic idea is this : Any of arr[i] means the index where it actually have to go to because all of the cases are consecutive, from ‘1’ to ‘n’. There are no cases like “{1, 2, 4, 8, 9}” as a simple example. What i did was to keep swapping the elements arr[i] and arr[arr[i]-1] till the element of arr[i] becomes i+1 for every loop; arr[0] should become ‘1’, arr[1] should become ‘2’, arr[3] = ‘3’ and so on. This worked very well and i think it’s simple. i’m sharing my code just in case for someone it could be a little help. Happy practicing.</summary></entry><entry><title type="html">Making .sh files executable on Linux terminal</title><link href="https://jerry901.github.io/en/2020/02/2020-02-07-01/" rel="alternate" type="text/html" title="Making .sh files executable on Linux terminal" /><published>2020-02-07T00:00:00+09:00</published><updated>2020-02-07T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/02/01</id><content type="html" xml:base="https://jerry901.github.io/en/2020/02/2020-02-07-01/">&lt;p&gt; Today, I’m going to post about the way &lt;strong&gt;how to make .sh files executable&lt;/strong&gt; on Linux command line.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-helloworldsh&quot;&gt;Create HelloWorld.sh&lt;/h2&gt;
+&lt;p&gt;  First, &lt;strong&gt;Create HelloWorld.sh file&lt;/strong&gt; like below.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hello World!&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;run-chmod-x-helloworldsh&quot;&gt;Run chmod +x HelloWorld.sh&lt;/h2&gt;
+
+&lt;p&gt;  &lt;strong&gt;Run chmod +x command&lt;/strong&gt;, then now you can execute HelloWorld.sh by running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;./HelloWorld.sh&lt;/code&gt; command&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;chmod&lt;/span&gt; +x HelloWorld.sh
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./HelloWorld.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; Hellow World!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;how-to-globally-execute-sh-files&quot;&gt;How to globally execute .sh files&lt;/h2&gt;
+&lt;p&gt;  To globally execute your .sh files, 
+you need to move them to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.local/bin/&lt;/code&gt;.
+This folder is given to the user with nothing(&lt;del&gt;maybe&lt;/del&gt;) inside once the OS is installed, and is &lt;strong&gt;basically added to the $PATH variable&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; ./HellowWorld.sh ~/.local/bin&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~/.local/bin/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Actually, The extension &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.sh&lt;/code&gt; is just to let users know that it is .sh file, and do nothing special. So, let’s do a trick like this.
+&lt;strong&gt; #Althogh you move your shell script file to ~/.local/bin/,&lt;/strong&gt; &lt;strong&gt;you still have to run&lt;/strong&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chmod +x filname&lt;/code&gt; &lt;strong&gt;command at the fist time&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; ./HelloWorld.sh HelloWorld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;run-helloworld-file&quot;&gt;Run HelloWorld file&lt;/h2&gt;
+&lt;p&gt; Now you can globally execute the shell script file anywhere as if it one of the commands that you have by typing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HelloWorld&lt;/code&gt; on your command line.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;HelloWorld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; Hello World!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;Documents
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;HelloWorld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; Hello World!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><summary type="html"> Today, I’m going to post about the way how to make .sh files executable on Linux command line.</summary></entry><entry><title type="html">A Guide to applying multilingual feature to github pages</title><link href="https://jerry901.github.io/en/2020/02/2020-02-06-01/" rel="alternate" type="text/html" title="A Guide to applying multilingual feature to github pages" /><published>2020-02-06T00:00:00+09:00</published><updated>2020-02-06T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/02/01</id><content type="html" xml:base="https://jerry901.github.io/en/2020/02/2020-02-06-01/">&lt;p&gt; On this post, I will provide you guys with some guided steps on &lt;strong&gt;how to make your Github pages multilingual&lt;/strong&gt; using one of Jekyll plugins. 
+To apply the multilingual feature, It is better to use &lt;strong&gt;plugin&lt;/strong&gt;, but Github does not support any other plugins with itself other than a few basic plugins for security reasons. 
+Therefore, uploading a project with some plugins will cause an &lt;strong&gt;Error&lt;/strong&gt; during the project build process. However, it’s not that there is no way out at all.
+It might help us skip the build process of Github to push pages that have been generated on your local environment to the master branch**. Also, we can still control the versions of your Jekyll project by creating a new branch for you projects to be pushed. 
+We can barely find information on applying multilingual feature to the github blog, so I hope this post will help many people have their Github pages more global.&lt;/p&gt;
+
+&lt;h2 id=&quot;jekyll-multiple-laguages-plug-in-installation&quot;&gt;jekyll-multiple-laguages plug-in installation&lt;/h2&gt;
+&lt;p&gt; There are several ways to install jekyll-multiple-laguages-plugin. What i have chosen from those ways is to use &lt;strong&gt;git submodule* because depending on the theme that I use, there may be issues related to the dependencies of gems.
+What you have to do first is to go to **root directory&lt;/strong&gt; of your Jekyll project and execute the following command:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git submodule add git://github.com/screeninteraction/jekyll-multiple-languages-plugin.git _plugins/multiple-languages
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls &lt;/span&gt;_plugins/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;If you can see this result from running &lt;strong&gt;ls _plugins/&lt;/strong&gt; command, 
+it should have been installed successfully.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;multiple-languages
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;setting-_configyml-file&quot;&gt;Setting _config.yml file&lt;/h2&gt;
+&lt;p&gt; Add the information of languages you want to support to the &lt;strong&gt;_config.yml&lt;/strong&gt; file. 
+The first element of it will be used as the &lt;strong&gt;default language&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# languages&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# default langages : &quot;ko&quot; &lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;languages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;ko&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;en&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;directory-structure&quot;&gt;Directory structure&lt;/h2&gt;
+&lt;p&gt;In the Jekyll project without multiple-languages-plugin,  Jekyll builds the &lt;strong&gt;.md files&lt;/strong&gt; under _post folder in the root directory of your project. However, if you install jekyll-multiple-languages-plugin, 
+&lt;strong&gt;jekyll serve command will build the _posts folder under the _i18n directory&lt;/strong&gt;. 
+Therefore, the following directory structure is required:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;project_root/
+&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; _i18n/
+&lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt; en/
+&lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt; _post/
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-01.md &lt;span class=&quot;c&quot;&gt;# your posts / .md&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-02.md
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-03.md
+         ...
+&lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt; ko/
+&lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt; _post/
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-01.md &lt;span class=&quot;c&quot;&gt;# your posts / .md&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-02.md
+&lt;span class=&quot;nt&quot;&gt;--------&lt;/span&gt; yyyy-mm-dd-03.md
+         ...
+&lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt; en.yml
+&lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt; ko.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;setting-lanugagesyml-files&quot;&gt;Setting lanugages.yml files&lt;/h2&gt;
+&lt;h3 id=&quot;enyml-example&quot;&gt;en.yml (example)&lt;/h3&gt;
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;global&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;english&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Eng&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;korean&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Kor&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;pages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Home&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;work&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Work&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;titles&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pagination&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Pagination&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;koyml-example&quot;&gt;ko.yml (example)&lt;/h3&gt;
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;global&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;english&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Eng&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;korean&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Kor&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;pages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Home&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;work&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Work&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;titles&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pagination&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Pagination&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;visiting-multiligual-pages&quot;&gt;Visiting multiligual pages&lt;/h2&gt;
+&lt;h3 id=&quot;default-language-page-korean&quot;&gt;Default language page (Korean)&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; https://blogurl.io/yyyy-mm-dd-01
+ https://localhost:4000/yyyy-mm-dd-01
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;multiligual-pages-english&quot;&gt;Multiligual pages (English)&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; https://blogurl.io/en/yyyy-mm-dd-01
+ https://localhost:4000/en/yyyy-mm-dd-01
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;publishing-automatically&quot;&gt;Publishing automatically&lt;/h2&gt;
+&lt;h3 id=&quot;create-a-source-branch-and-set-it-to-the-default-branch&quot;&gt;Create a source branch and set it to the default branch&lt;/h3&gt;
+&lt;p&gt;  &lt;strong&gt;Run&lt;/strong&gt; these commands below in you &lt;strong&gt;local repository&lt;/strong&gt;; 
+git push &lt;strong&gt;-u&lt;/strong&gt; option does nothing, but later on you can just simply push your sources &lt;strong&gt;without typing the name of branches&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git checkout &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;source &lt;/span&gt;master
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git push &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; origin &lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And then, go to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Github web &amp;gt; your repository &amp;gt; Settings &amp;gt; Branches &amp;gt; Default branch&lt;/code&gt;, &lt;strong&gt;set the source branch to the default branch&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;rakefile&quot;&gt;Rakefile&lt;/h3&gt;
+&lt;p&gt;Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vi Rakefile&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vi rakefile&lt;/code&gt; on the root directory of your jekyll project. and add the flowing. If there is no rakefile, you can just &lt;strong&gt;create a new one&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Auto publish&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Change your GitHub reponame&lt;/span&gt;
+GITHUB_REPONAME &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;username/username.github.io&quot;&lt;/span&gt;
+
+desc &lt;span class=&quot;s2&quot;&gt;&quot;Generate blog files&quot;&lt;/span&gt;
+task :generate &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;Jekyll::Site.new&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Jekyll.configuration&lt;span class=&quot;o&quot;&gt;({&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;source&quot;&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;.&quot;&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;destination&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;_site&quot;&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}))&lt;/span&gt;.process
+end
+
+desc &lt;span class=&quot;s2&quot;&gt;&quot;Generate and publish blog to gh-pages&quot;&lt;/span&gt;
+task :publish &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;:generate] &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;Dir.mktmpdir &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; |tmp|
+    cp_r &lt;span class=&quot;s2&quot;&gt;&quot;_site/.&quot;&lt;/span&gt;, tmp
+
+    &lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; Dir.pwd
+    Dir.chdir tmp
+
+    system &lt;span class=&quot;s2&quot;&gt;&quot;git init&quot;&lt;/span&gt;
+    system &lt;span class=&quot;s2&quot;&gt;&quot;git add .&quot;&lt;/span&gt;
+	message &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Site updated at #{Time.now.utc}&quot;&lt;/span&gt;
+	system &lt;span class=&quot;s2&quot;&gt;&quot;git commit -m #{message.inspect}&quot;&lt;/span&gt;
+    system &lt;span class=&quot;s2&quot;&gt;&quot;git remote add origin https://github.com/#{GITHUB_REPONAME}.git&quot;&lt;/span&gt;
+    system &lt;span class=&quot;s2&quot;&gt;&quot;git push origin master --force&quot;&lt;/span&gt;
+
+    Dir.chdir &lt;span class=&quot;nb&quot;&gt;pwd
+  &lt;/span&gt;end
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;run-rake-publish&quot;&gt;Run rake publish&lt;/h3&gt;
+&lt;p&gt;  Now you can easily publish your pages that have been generated in you local environment to the master branch by running&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rake publish&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle exec rake publish&lt;/code&gt;, and push your project to the source branch by running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git push&lt;/code&gt; command&lt;/p&gt;
+
+&lt;h3 id=&quot;language-switcher&quot;&gt;Language switcher&lt;/h3&gt;
+&lt;p&gt;  Now that you got a multilingual feature, you might need a langage switcher. Here’s an example source of the language switcher that you can see on the top of this blog. I added it below the &amp;lt;nav&amp;gt; tag of masthead.html. (CSS might need to be configured)&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;nav&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;lang-sel&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;ul&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;lang&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+        {% capture link1 %}{{ site.baseurl_root }}{{ page.url}}{% endcapture %}
+        {% capture link2 %}{{ site.baseurl_root }}/en{{ page.url}}{% endcapture %}
+        {% if site.lang == &quot;ko&quot; %}
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;masthead_menu-item visible-links&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+	        &lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{{ link1 }}&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;enabled&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;{% t global.korean%} &lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;|&lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{{ link2 }}&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt; {% t global.english%}&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+        {% elsif site.lang == &quot;en&quot; %}
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;masthead_menu-item lang&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+	        &lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{{ link1 }}&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;{% t global.korean%} &lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;|&lt;span class=&quot;nt&quot;&gt;&amp;lt;a&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;href=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{{ link2 }}&quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;enabled&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt; {% t global.english%}&lt;span class=&quot;nt&quot;&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+        {% endif %}
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;&amp;lt;/nav&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;finishing-this-post&quot;&gt;Finishing this post..&lt;/h2&gt;
+&lt;p&gt;  i have spent a lot of time to make this feature work out. I hope somebody can get some help with this, and save their time.&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Jekyll" /><summary type="html"> On this post, I will provide you guys with some guided steps on how to make your Github pages multilingual using one of Jekyll plugins. To apply the multilingual feature, It is better to use plugin, but Github does not support any other plugins with itself other than a few basic plugins for security reasons. Therefore, uploading a project with some plugins will cause an Error during the project build process. However, it’s not that there is no way out at all. It might help us skip the build process of Github to push pages that have been generated on your local environment to the master branch**. Also, we can still control the versions of your Jekyll project by creating a new branch for you projects to be pushed. We can barely find information on applying multilingual feature to the github blog, so I hope this post will help many people have their Github pages more global.</summary></entry><entry><title type="html">Configuring Vim editor</title><link href="https://jerry901.github.io/en/2020/01/2020-01-27-01/" rel="alternate" type="text/html" title="Configuring Vim editor" /><published>2020-01-27T00:00:00+09:00</published><updated>2020-01-27T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/01/01</id><content type="html" xml:base="https://jerry901.github.io/en/2020/01/2020-01-27-01/">&lt;p&gt;  I want to share my configuration of vim editor. Paste the following into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.vimrc&lt;/code&gt; to make these settings work. Run the command below and create the file if &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/.vimrc&lt;/code&gt; does not exist.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;touch&lt;/span&gt; ~/.vimrc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;script async=&quot;&quot; src=&quot;https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;ins class=&quot;adsbygoogle&quot; style=&quot;display:block; text-align:center;&quot; data-ad-layout=&quot;in-article&quot; data-ad-format=&quot;fluid&quot; data-ad-client=&quot;ca-pub-4764055672560525&quot; data-ad-slot=&quot;1747815845&quot;&gt;&lt;/ins&gt;
+&lt;script&gt;
+     (adsbygoogle = window.adsbygoogle || []).push({});
+&lt;/script&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-vi-vimrc&quot;&gt;$ vi ~/.vimrc&lt;/h2&gt;
+&lt;div class=&quot;language-viml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;&quot; syntax hilight &lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;syntax&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;on&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;nocompatible&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; search result hilight &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hlsearch&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; line number &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;nu&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; auto indent &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;autoindent&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;scrolloff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;wildmode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;longest&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;list&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; tag select &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; st select &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; scroll bar width&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; automatically save when moving to another file &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;autowrite&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; automatically re-load if current file has been changed externally &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;autoread&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; C style indent &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cindent&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;history&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;100&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; always show status bar  &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;laststatus&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; indent width (4 = 4 spaces)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;shiftwidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;smarttab&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;smartindent&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;softtabstop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;tabstop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; show the current cursor &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;ruler&lt;/span&gt; 
+
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;statusline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;\ %&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;v&lt;/span&gt;\ &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;%P&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;%&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;a&lt;/span&gt;\ %&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;m&lt;/span&gt;%&lt;span class=&quot;k&quot;&gt;r&lt;/span&gt;\ %F\
+
+&lt;span class=&quot;c&quot;&gt;&quot; file encoding &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;fileencoding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;utf&lt;span class=&quot;m&quot;&gt;-8&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; when press backspace at line end, start or indent, move to previous line &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;backspace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;eol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;start&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;indent&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; incremental searching &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;incsearch&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; ignore case, set ic also works &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;ignorecase&lt;/span&gt; 
+
+&lt;span class=&quot;c&quot;&gt;&quot; terminal encoding &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;tenc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;utf&lt;span class=&quot;m&quot;&gt;-8&lt;/span&gt;      
+
+&lt;span class=&quot;c&quot;&gt;&quot; korean files to euc-kr, uni-code to uni-code &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;fencs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;ucs&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;bom&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;utf&lt;span class=&quot;m&quot;&gt;-8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;euc&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;kr&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;latin1 
+
+&lt;span class=&quot;c&quot;&gt;&quot; key mappings Leader key &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; mapleader&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;,&quot;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; allow use mouse &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;&quot; F7 to turn it on&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;F7&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;ESC&lt;span class=&quot;p&quot;&gt;&amp;gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;mouse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;CR&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;&quot; F8 to turn it off&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;F8&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;ESC&lt;span class=&quot;p&quot;&gt;&amp;gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;mouse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;-=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;CR&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; key mappings &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;&quot; insert mode&lt;/span&gt;
+inoremap jk &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;esc&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; normal mode&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; $
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; ^
+nnoremap &lt;span class=&quot;k&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;d&lt;/span&gt;$
+nnoremap &lt;span class=&quot;k&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;d&lt;/span&gt;^
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;Tab&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;Tab&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;C&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;--&amp;lt;&lt;/span&gt;CR&lt;span class=&quot;p&quot;&gt;&amp;gt;==&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;C&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;CR&lt;span class=&quot;p&quot;&gt;&amp;gt;==&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;k&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; to avoid openning help when pressed Shift-k&lt;/span&gt;
+nnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;leader&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;&quot; visual mode&lt;/span&gt;
+vnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; $
+vnoremap &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;S&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt; ^
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Kwanghoo Park</name></author><category term="Linux" /><summary type="html">  I want to share my configuration of vim editor. Paste the following into ~/.vimrc to make these settings work. Run the command below and create the file if ~/.vimrc does not exist. $ touch ~/.vimrc</summary></entry><entry><title type="html">Publishing Github blog with Jekyll</title><link href="https://jerry901.github.io/en/2020/01/2020-01-27-02/" rel="alternate" type="text/html" title="Publishing Github blog with Jekyll" /><published>2020-01-27T00:00:00+09:00</published><updated>2020-01-27T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/01/02</id><content type="html" xml:base="https://jerry901.github.io/en/2020/01/2020-01-27-02/">&lt;p&gt;  In my previous post, I dealed with &lt;strong&gt;&lt;a href=&quot;https://jerry901.github.io/en/2020/01/2020-01-26-02/&quot;&gt;Jekyll Install on Ubuntu 18.04 LTS&lt;/a&gt;&lt;/strong&gt;.
+Today, let’s take a look at how to publish Gihub pages with &lt;strong&gt;Jekyll&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;create-a-new-github-repository&quot;&gt;Create a new Github Repository&lt;/h2&gt;
+
+&lt;p&gt;  First of all, You need to &lt;strong&gt;&lt;a href=&quot;http://www.github.com/new&quot;&gt;create a new Github repository&lt;/a&gt;&lt;/strong&gt; in order to upload static pages created by Jekyll. &lt;strong&gt;Repository name&lt;/strong&gt; field should be formatted as &lt;strong&gt;username.github.io&lt;/strong&gt;. Tnen, this name will work as a domain of your site.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2020-01-27/2020-01-27_create_a_new_repo.png&quot; alt=&quot;ex_screenshot&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;download-a-theme&quot;&gt;Download a theme&lt;/h2&gt;
+&lt;p&gt;  Secondly, &lt;strong&gt;&lt;a href=&quot;http://jekyllthemes.org&quot;&gt;Pick a theme here&lt;/a&gt;&lt;/strong&gt; that you might want to apply on your bolg. 
+What i picked was &lt;strong&gt;&lt;a href=&quot;https://github.com/mmistakes/minimal-mistakes&quot;&gt;Minimal Mistakes&lt;/a&gt;&lt;/strong&gt; theme which is one of the most popular Jekyll themes and also this blog was made with.&lt;/p&gt;
+
+&lt;p&gt; Run the commands below to install Minimal Mistakes. 
+If you chose another theme for your site, change the URL parameter of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ git clone&lt;/code&gt;command to the URL of the theme you picked.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone https://github.com/mmistakes/minimal-mistakes.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;build-the-project&quot;&gt;Build the project&lt;/h2&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;minimal-mistakes
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;bundle &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;  If you see the result below, the build has done succesfully.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Configuration file: /home/userName/minimal-mistakes/_config.yml
+            Source: /home/userName/minimal-mistakes
+       Destination: /home/userName/minimal-mistakes/_site
+ Incremental build: disabled. Enable with &lt;span class=&quot;nt&quot;&gt;--incremental&lt;/span&gt;
+       Generating... 
+       Jekyll Feed: Generating feed &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;posts
+                    &lt;span class=&quot;k&quot;&gt;done in &lt;/span&gt;0.199 seconds.
+ Auto-regeneration: enabled &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/home/userName/minimal-mistakes'&lt;/span&gt;
+    Server address: http://127.0.0.1:4000
+    Server running... press ctrl-c to stop.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;  Check if your local server works well by connecting to 
+&lt;strong&gt;&lt;a href=&quot;http://127.0.0.1:4000/&quot;&gt;http://127.0.0.1:4000/&lt;/a&gt;&lt;/strong&gt; or &lt;strong&gt;&lt;a href=&quot;http://localhost:4000/&quot;&gt;http://localhost:4000/&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;commit-sources-to-the-repository&quot;&gt;Commit sources to the repository&lt;/h2&gt;
+&lt;p&gt;  Clone your &lt;strong&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;userName.github.io&lt;/code&gt;&lt;/strong&gt; repository, and copy the files in minimal-mistakes directory to the local repositroy. 
+Then, your pages will be published on github.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone repository_URL 
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; minimal-mistakes/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; local_repo_folder_name
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;local_repo_folder_name
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git add &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;hello my blog&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git push origin master 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Go to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://userName.github.io&lt;/code&gt; and see if your blog has been published successfully. It might take a few munites to be able to see the changes.&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Jekyll" /><summary type="html">  In my previous post, I dealed with Jekyll Install on Ubuntu 18.04 LTS. Today, let’s take a look at how to publish Gihub pages with Jekyll</summary></entry><entry><title type="html">Jekyll Install on Ubuntu 18.04 LTS</title><link href="https://jerry901.github.io/en/2020/01/2020-01-26-02/" rel="alternate" type="text/html" title="Jekyll Install on Ubuntu 18.04 LTS" /><published>2020-01-26T00:00:00+09:00</published><updated>2020-01-26T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/01/02</id><content type="html" xml:base="https://jerry901.github.io/en/2020/01/2020-01-26-02/">&lt;p&gt; The most common environment for publishing github pages is to use &lt;strong&gt;Jekyll&lt;/strong&gt; plugin on macOS or Linux.
+So today, I am going to provide you with guided steps on how to install a static site generator called &lt;strong&gt;Jekyll&lt;/strong&gt; on &lt;strong&gt;Ubuntu 18.04 LTS&lt;/strong&gt; environment.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-environment&quot;&gt;Setting environment&lt;/h2&gt;
+&lt;p&gt; Jekyll is written in Ruby language, which means you must install to run it, 
+but you might &lt;strong&gt;not&lt;/strong&gt; want to just use &lt;strong&gt;“apt-get” pakage manager&lt;/strong&gt; &lt;del&gt;(&lt;strong&gt;homebrew&lt;/strong&gt; in case of MacOS)&lt;/del&gt;. 
+this is why : Installing Ruby with a pakage manager can get you into such deep trouble because each software written in Ruby&lt;del&gt;(a.k.a &lt;strong&gt;gems&lt;/strong&gt;)&lt;/del&gt; has different versions of Ruby to be installed with. 
+By using &lt;strong&gt;rbenv&lt;/strong&gt;, you can change which version of Ruby to use whenever it’s needed.
+Therefore, The first step you might need to do is to install the Ruby using &lt;strong&gt;rbenv&lt;/strong&gt; which is one of the &lt;strong&gt;Ruby version management softwares&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;--install-dependencies&quot;&gt; - Install dependencies&lt;/h3&gt;
+&lt;p&gt; Run these commands on shell. The &lt;strong&gt;apt-get update&lt;/strong&gt; command will do nothing but update the list of softwares that your system may need.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get update
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev software-properties-common libffi-dev nodejs
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--install-rbenv&quot;&gt; - Install rbenv&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--add-environment-variables&quot;&gt; - Add environment variables&lt;/h3&gt;
+&lt;p&gt; Check if these variables are added to &lt;strong&gt;~/.bashrc file&lt;/strong&gt; after running these commands.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'export PATH=&quot;$HOME/.rbenv/bin:$PATH&quot;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; ~/.bashrc
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'eval &quot;$(rbenv init -)&quot;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; ~/.bashrc
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SHELL&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--install-ruby-build&quot;&gt; - Install ruby-build&lt;/h3&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'export PATH=&quot;$HOME/.rbenv/plugins/ruby-build/bin:$PATH&quot;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; ~/.bashrc
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exec&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$SHELL&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--rehash-rbenv&quot;&gt; - Rehash rbenv&lt;/h3&gt;
+&lt;p&gt; rbenv creates shims for all the commands ( ruby , irb , rake , gem and so on) across all your installed versions of Ruby. This process is called rehashing. Every time you install a new version of Ruby or install a gem that provides a command, run rbenv rehash to make sure any new commands are shimmed.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rbenv rehash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--install-ruby-with-rbenv&quot;&gt; - Install Ruby with rbenv&lt;/h3&gt;
+&lt;p&gt;  The version of Ruby that i’m using currently is 2.6.3 and i haven’t had any issues with it, but you can definately choose the version depending on your preference&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rbenv &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;2.6.3 
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rbenv global 2.6.3 
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;rbenv rehash 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--install-jekyll&quot;&gt; - Install Jekyll&lt;/h3&gt;
+&lt;p&gt; If you install Ruby with rbenv, you would probably get &lt;strong&gt;gem&lt;/strong&gt; command installed together. 
+&lt;strong&gt;gem&lt;/strong&gt; is one of the gems that Ruby can install, so you can call this gem on you command line. &lt;strong&gt;gem&lt;/strong&gt; command is used to install the other gems written in Ruby. This seems to me like it does the same thing as what &lt;strong&gt;apt-get&lt;/strong&gt; command does on Linux.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gem &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;jekyll
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;--install-bundler&quot;&gt; - Install bundler&lt;/h3&gt;
+&lt;p&gt; What bundler does is managing each gem’s application depndency. In case that a gem is dependant on the other gem, you can write these dependencies in a file called &lt;strong&gt;Gemfile&lt;/strong&gt;, and install those gems easily with a command &lt;strong&gt;bundle install&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gem &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;bundler
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;getting-started-with-jekyll&quot;&gt;Getting started with Jekyll&lt;/h2&gt;
+&lt;h3 id=&quot;--create-a-new-jekyll-project&quot;&gt; - Create a new Jekyll project&lt;/h3&gt;
+&lt;p&gt; If you want publish github pages, the format of your project folder’s name must be &lt;strong&gt;github_username.githubio&lt;/strong&gt;.
+ After creating a new Jekyll project with &lt;strong&gt;jekyll new&lt;/strong&gt; command, you can run your local server by running &lt;strong&gt;jekyll serve&lt;/strong&gt; command and check if you local server works with making a connection to http://localhost:4000.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;Jekyll new project_name  
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;project_name
+ ~/project_name &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;--example-of-bundler-usage&quot;&gt; - Example of Bundler usage&lt;/h3&gt;
+&lt;p&gt; Move to your project’s root directory, and then open &lt;strong&gt;Gemfile&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ~/project_name &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;vi Gemfile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Add a dependency like below(any line). jekyll_plugins allows us to work with graphical admin pages while you are working on our jekyll project.&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; gem &lt;span class=&quot;s1&quot;&gt;'jekyll-admin'&lt;/span&gt;, group: :jekyll_plugins
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Run bundle install command to install the plugin&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;bundle &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt;
+ &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~/project_name
+  ~/project_name &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;jekyll serve 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now we can check if the plugin works fine by connecting to http://localhost:4000/admin/&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;p&gt; - &lt;a href=&quot;https://stackoverflow.com/questions/9394338/how-do-rvm-and-rbenv-actually-work&quot;&gt;Stack overflow - How do RVM and rbenv actually work?&lt;/a&gt;&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Jekyll" /><summary type="html"> The most common environment for publishing github pages is to use Jekyll plugin on macOS or Linux. So today, I am going to provide you with guided steps on how to install a static site generator called Jekyll on Ubuntu 18.04 LTS environment.</summary></entry><entry><title type="html">Hello</title><link href="https://jerry901.github.io/en/2020/01/2020-01-26-01/" rel="alternate" type="text/html" title="Hello" /><published>2020-01-26T00:00:00+09:00</published><updated>2020-01-26T00:00:00+09:00</updated><id>https://jerry901.github.io/en/2020/01/01</id><content type="html" xml:base="https://jerry901.github.io/en/2020/01/2020-01-26-01/">&lt;p&gt;This is my new blog&lt;/p&gt;
+
+&lt;p&gt;2020-01-26 12:47:03 +0900&lt;/p&gt;</content><author><name>Kwanghoo Park</name></author><category term="Jekyll" /><category term="Update" /><summary type="html">This is my new blog</summary></entry></feed>

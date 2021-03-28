@@ -83,7 +83,7 @@ end
 # Auto publish
 
 # Change your GitHub reponame
-GITHUB_REPONAME = "jerry901/jerry901.github.io"
+GITHUB_REPONAME = "twinai/jerry901"
 
 
 desc "Generate blog files"
